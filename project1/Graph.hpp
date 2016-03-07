@@ -7,8 +7,7 @@ class Graph {
 public:
 	
 	virtual ~Graph() {}
-	
-	
+
 };
 
 #endif

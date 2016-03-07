@@ -1,5 +1,7 @@
- 
-make: clear .o .exe clean run
+#set stdin to standart input method
+in = &0
+
+compile: clear .o .exe clean
 
 clear:
 	@clear
@@ -13,5 +15,7 @@ clear:
 clean:
 	@rm -f *.o
 	@rm -f app
-run:
-	@./main
+
+#use "make run in=<input_file>" to run from file
+run: 
+	./main 0<$(in)
