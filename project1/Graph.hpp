@@ -32,8 +32,8 @@ public:
 	}
 	
 	virtual ~Graph() {
-// 		call delete for each node when using Node*
-		_nodes.clear();
+		for(unsigned t=0; t<=_nodes.size(); t++)
+			delete(_nodes[t]);
 	}
 	
 	
