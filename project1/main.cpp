@@ -1,33 +1,34 @@
 #include <iostream> 
 #include <string> //not sure if needed
 
-#include "Node.hpp" 
+#include "Graph.hpp" 
  
  int main () {
 	std::cout << std::endl;
 	
-	int n_nodes;
-	int n_connec;
-	std::string s = "112";
+	int N = 0;
+	int aux = 0;
 	
-	//cant convert string to int
-	//
-	//std::cout << atoi(s.c_str()) << std::endl; 
-	
-	std::getline(std::cin, s);
-	std::cout << s.substr(0, s.find(" ")) << std::endl; //works fine for parsing
-	
-	n_nodes = 0; //convert parsed string to int
-	n_connec = 0;
-	
-	std::cout << "Num Nodes: " << n_nodes << std::endl;
-	std::cout << "Num Connec: " << n_connec << std::endl;
+	std::cin >> N;
+	std::cout << "nodes: " << N << std::endl;
+	std::cin >> aux;	// discard number of connections
+	std::cout << "conections: " << aux << std::endl << std::endl;
 
-	std::cout << "Nodes Created:";
-	while(std::getline(std::cin, s)){
-		std::cout << " " << Node(1).getId();
-	}
-	std::cout << std::endl;
+	
+// 	// just to check if working because this consumes the input
+// 	for(int t=1; t<N; t++) {
+// 		std::cin >> one;
+// 		std::cin >> two;
+// 		
+// 		std::cout << t << ":  " << one << "\t" << two << " " << std::endl;
+// 	}
+	
+	
+	Graph* graph = new Graph(N);
+	
+	std::cout << graph;
+
+	delete(graph);
 	
 	std::cout << std::endl;
 	return 0;
