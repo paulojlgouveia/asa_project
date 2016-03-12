@@ -4,37 +4,51 @@
 #include <iostream> 
 #include <vector>
 
+#include "Connection.hpp" 
+
+
 class Node {
 	int _id;
-	std::vector<Node*> _connections;
+	std::vector<Connection*> _connections;
+	bool _visited;
+	
 	
 public:
 	
-	Node(int id) : _id(id) {}
+	Node(int id) : _id(id), _visited(false) {}
 	
-	virtual ~Node() {}
+	virtual ~Node() {
+		for(unsigned t=0; t<_connections.size(); t++)
+			delete(_connections[t]);
+	}
 	
 	
 	int getId() const { return _id; }
 	
+	bool visited() const { return _visited; }
+	
 	int getNumberOfConnections() const { return _connections.size(); }
 	
-	Node* getNodeAt(int index) const { return _connections[index]; }
+	Connection* getConnectionAt(int index) const { return _connections[index]; }
 	
+	
+	void visit() { _visited = true; }
+	
+	void resetVisit() { _visited = false; }
 	
 	void connect(Node* node) {
-		std::cout << "adding to " << _id << " connection to " << node->getId() << std::endl;
-		_connections.push_back(node);
+		_connections.push_back(new Connection(node));
 	}
 	
 	
 	friend std::ostream &operator<<(std::ostream &out, const Node *node) {
-		out << node->getId() << ":  ";
+		out << node->getId() << ":   ";
 		
 		for(int t=0; t<node->getNumberOfConnections(); t++) {
 			if(t>0)
-				out << ",  ";
-			out << node->getNodeAt(t)->getId();
+				out << " ,  ";
+			out << node->getConnectionAt(t)->getNext()->getId();
+			out << "|" << node->getConnectionAt(t)->isActive();
 		}
 		
 		return out;

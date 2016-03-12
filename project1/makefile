@@ -7,10 +7,10 @@ clear:
 	@clear
 
 .o:
-	g++ -ansi -pedantic -Wall -c main.cpp
+	g++ -ansi -pedantic -Wall -c main.cpp -std=c++11
 
 .exe: 
-	g++ -o main main.o
+	g++ -o main main.o -std=c++11
 
 clean:
 	@rm -f *.o

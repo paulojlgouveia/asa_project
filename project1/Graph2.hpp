@@ -1,5 +1,5 @@
-#ifndef __GRAPH_H__
-#define __GRAPH_H__
+#ifndef __GRAPH2_H__
+#define __GRAPH2_H__
 
 #include <iostream>
 #include <vector>
@@ -7,14 +7,14 @@
 #include "Node.hpp"
 
 
-// graph with only one connection per connection (from lowest to highest nodes)
-class Graph {
+// graph with ywo connections per connection (one connection for each direction)
+class Graph2 {
 	
 	std::vector<Node*> _nodes; 
 	
 public:
 	
-	Graph(int N) {
+	Graph2(int N) {
 		int one=0, two=0, t;
 		
 		for(t=1; t<=N; t++)
@@ -24,14 +24,12 @@ public:
 			std::cin >> one;
 			std::cin >> two;
 			
-			if(one<=two)
-				_nodes[one-1]->connect(_nodes[two-1]);
-			else
-				_nodes[two-1]->connect(_nodes[one-1]);
+			_nodes[one-1]->connect(_nodes[two-1]);	// vector starts at index 0
+			_nodes[two-1]->connect(_nodes[one-1]);	// file starts at 1
 		}
 	}
 	
-	Graph(Graph* graph) {
+	Graph2(Graph2* graph) {
 		for(int i=1; i<=graph->getNumberOfNodes(); i++)
 			_nodes.push_back(new Node(i));
 		
@@ -40,7 +38,7 @@ public:
 				_nodes[i]->connect(_nodes[graph->getNodeAt(i)->getConnectionAt(j)->getNext()->getId()-1]);
 	}
 	
-	virtual ~Graph() {
+	virtual ~Graph2() {
 		for(unsigned t=0; t<_nodes.size(); t++)
 			delete(_nodes[t]);
 	}
@@ -59,7 +57,7 @@ public:
 	}
 	
 	
-	friend std::ostream &operator<<(std::ostream &out, const Graph *graph) {
+	friend std::ostream &operator<<(std::ostream &out, const Graph2 *graph) {
 		out << std::endl;
 		for(int t=0; t<graph->getNumberOfNodes(); t++) {
 			out << graph->getNodeAt(t) << std::endl;
