@@ -7,7 +7,7 @@
 #include "Node.hpp"
 
 
-// graph with ywo connections per connection (one connection for each direction)
+// graph with two connections per connection (one connection for each direction)
 class Graph {
 	
 	std::vector<Node*> _nodes; 

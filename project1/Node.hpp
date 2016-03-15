@@ -17,7 +17,7 @@ class Node {
 	
 public:
 	
-	Node(int id) : _id(id), _visited(false) {}
+	Node(int id) : _id(id), _active(true), _visited(false) {}
 	
 	virtual ~Node() {
 		for(unsigned t=0; t<_connections.size(); t++)
@@ -33,6 +33,8 @@ public:
 	bool visited() const { return _visited; }
 
 	int getNumberOfConnections() const { return _connections.size(); }
+	
+	std::vector<Connection*> getConnections() { return _connections; }
 	
 	Connection* getConnectionAt(int index) const { return _connections[index]; }
 	Node* getNodeAt(int index) const { return getConnectionAt(index)->getNext(); }

@@ -18,7 +18,7 @@ void update(int* min, int* max, int id) {
 	int N = 0, E = 0;
 	int min = -1, max = -1, crucial = 0;
 	
-	Graph* g ;
+	Graph* g;
 	Node* node;
 	
 	
@@ -29,20 +29,22 @@ void update(int* min, int* max, int id) {
 	
 	g = new Graph(N);
 	
-	for(int t=0; t<N; t++) {
-		node = g->getNodeAt(t);
-		node->disable();
+	Search::dfs(g->getNodeAt(0));
+	
+	//~ for(int t=0; t<N; t++) {
+		//~ node = g->getNodeAt(t);
+		//~ node->disable();
 		
-		Search::dfs(g);
+		//~ Search::dfs(n);
 		
-		if(!g->allVisited()) {
-			update(&min, &max, node->getId());
-			crucial++;
-		} else
-			std::cout << t << " all visited" << std::endl;
+		//~ if(!g->allVisited()) {
+			//~ update(&min, &max, node->getId());
+			//~ crucial++;
+		//~ } else
+			//~ std::cout << t << " all visited" << std::endl;
 		
-		node->enable();
-	}
+		//~ node->enable();
+	//~ }
 	
 	
 // 	loop							-> O(N)	-> 
