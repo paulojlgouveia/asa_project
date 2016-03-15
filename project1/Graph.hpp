@@ -46,11 +46,13 @@ public:
 	}
 	
 	
+/*getters*/
+	
 	int getNumberOfNodes() const { return _nodes.size(); }
 	
 	Node* getNodeAt(int index) const { return _nodes[index]; }
 	
-	bool allVisited() {
+	bool allVisited() const {
 		for(Node* node : _nodes)
 			if(node->visited() == false)
 				return false;
@@ -59,6 +61,8 @@ public:
 	}
 	
 	
+/*operators*/
+
 	friend std::ostream &operator<<(std::ostream &out, const Graph *graph) {
 		out << std::endl;
 		for(int t=0; t<graph->getNumberOfNodes(); t++) {

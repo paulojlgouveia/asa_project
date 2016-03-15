@@ -1,7 +1,7 @@
-#set stdin to standart input method
-in = &0
-
 compile: clear .o .exe clean
+
+in=t02
+out=files/$(in).out
 
 clear:
 	@clear
@@ -16,6 +16,12 @@ clean:
 	@rm -f *.o
 	@rm -f app
 
-#use "make run in=<input_file>" to run from file
 run: 
-	./main 0<$(in)
+	./main < files/$(in).in
+	cat $(out)
+	@echo
+	
+memcheck:
+	valgrind --leak-check=full ./main < files/$(in).in
+	cat $(out)
+	@echo

@@ -9,6 +9,7 @@ class Node;	// avoid circular dependencies
 
 class Connection {
 	Node* _next;
+	
 	bool _active;
 	
 	
@@ -19,16 +20,21 @@ public:
 	virtual ~Connection() {}
 	
 	
+/*getters*/
+
 	int isActive() const { return _active; }
 	
 	Node* getNext() const { return _next; }
 	
 	
+/*setters*/
+
 	void enable() { _active = true; }
-	
 	void disable() { _active = false; }
 	
 	
+/*operators*/
+
 // 	friend std::ostream &operator<<(std::ostream &out, const Connection* connection) {
 // 		out << connection->getNext()->getId() << "|" << connection->isActive();
 // 		return out;
