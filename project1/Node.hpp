@@ -4,73 +4,87 @@
 #include <iostream> 
 #include <vector>
 
-#include "Connection.hpp" 
-
-
 class Node {
 	int _id;
-	std::vector<Connection*> _connections;
-	bool _active;
-	
 	bool _visited;
-	
+	std::vector<Node*> _activeNodes;
+	std::vector<Node*> _inactiveNodes;
 	
 public:
 	
-	Node(int id) : _id(id), _active(true), _visited(false) {}
+	Node(int id) : _id(id), _visited(false) {}
 	
-	virtual ~Node() {
-		for(unsigned t=0; t<_connections.size(); t++)
-			delete(_connections[t]);
+	Node(Node* node) : _id(node->getId()), _visited(node->visited()) {
+		for (Node* nd : node->getActiveNodes())
+			addActiveNode(nd);
+			
+		for (Node* nd : node->getInactiveNodes())
+			addInactiveNode(nd);
 	}
+	
+	virtual ~Node() {}
 	
 /*getters*/
 
 	int getId() const { return _id; }
 	
-	int isActive() const { return _active; }
-	
 	bool visited() const { return _visited; }
-
-	int getNumberOfConnections() const { return _connections.size(); }
 	
-	std::vector<Connection*> getConnections() { return _connections; }
+	std::vector<Node*> getActiveNodes() { return _activeNodes; }
+	std::vector<Node*> getInactiveNodes() { return _inactiveNodes; }
 	
-	Connection* getConnectionAt(int index) const { return _connections[index]; }
-	Node* getNodeAt(int index) const { return getConnectionAt(index)->getNext(); }
+	int getActiveNodesNumber() const { return _activeNodes.size(); }
+	int getInactiveNodesNumber() const { return _inactiveNodes.size(); }
 	
+	Node* getActiveNodeAt(int index) const { return _activeNodes[index]; }
+	Node* getInactiveNodeAt(int index) const { return _inactiveNodes[index]; }
 	
 /*setters*/
-
-	void enable() { _active = true; }
-	void disable() { _active = false; }
 	
 	void visit() { _visited = true; }
 	void resetVisit() { _visited = false; }
-
 	
 /*modifiers*/
 
-	void connect(Node* node) {
-		_connections.push_back(new Connection(node));
+	void addActiveNode(Node* node) {
+		_activeNodes.push_back(node);
 	}
 	
+	void addInactiveNode(Node* node) {
+		_inactiveNodes.push_back(node);
+	}
+	
+	void deactivate(Node* node) {
+		for (int i = 0; i < getActiveNodesNumber(); i++){
+			if (node == getActiveNodeAt(i)) {
+				_inactiveNodes.push_back(getActiveNodeAt(i));
+				_activeNodes.erase(_activeNodes.begin() + i);
+			}
+		}
+	}
+	
+	void reactivate(Node* node) {
+		for (int i = 0; i < getInactiveNodesNumber(); i++){
+			if (node == getInactiveNodeAt(i)) {
+				_activeNodes.push_back(getInactiveNodeAt(i));
+				_inactiveNodes.erase(_inactiveNodes.begin() + i);
+			}
+		}
+	}
 	
 /*operators*/
 
 	friend std::ostream &operator<<(std::ostream &out, const Node *node) {
-		out << node->getId() << "|" << node->isActive() << ":   ";
+		out << node->getId() << ":   ";
 		
-		for(int t=0; t<node->getNumberOfConnections(); t++) {
-			if(t>0)
-				out << " ,  ";
-			out << node->getConnectionAt(t)->getNext()->getId();
-			out << "|" << node->getConnectionAt(t)->isActive();
-		}
+		for (Node* nd : node->getActiveNodes())
+			out << nd->getId() << " ";
+			
+		for (Node* nd : node->getActiveNodes())
+			out << "(" << nd->getId() << ") ";
 		
 		return out;
 	}
-
 };
 
 

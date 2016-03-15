@@ -19,21 +19,19 @@ public:
 	//Iterative DFS
 	static void dfs(Node *startNode) {
 		std::stack<Node*> stack;
-		Node* node;
+		Node* currentNode;
 		
 		stack.push(startNode);
 		
-		while(stack.size() != 0){
-			node = stack.top();
-			node->visit();
+		while (stack.size() != 0){
+			currentNode = stack.top();
+			currentNode->visit();
 			stack.pop();
 			
-			std::cout << node->getId() << std::endl;
+			std::cout << currentNode->getId() << std::endl;
 
-			for(Connection* child : node->getConnections()){
-				if (!child->getNext()->visited())
-					stack.push(child->getNext());
-			}
+			for(Node* node : currentNode->getActiveNodes())
+				stack.push(node);
 		}
 	}
 	
