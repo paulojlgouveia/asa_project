@@ -3,7 +3,6 @@
 
 #include "Search.hpp"
 #include "Graph.hpp"
-#include "Graph2.hpp"
 
 
 void update(int* min, int* max, int id) {
@@ -19,34 +18,30 @@ void update(int* min, int* max, int id) {
 	int N = 0, E = 0;
 	int min = -1, max = -1, crucial = 0;
 	
+	Graph* g ;
+	Node* node;
+	
 	
 	std::cin >> N;
 	std::cout << "nodes: " << N << std::endl;
 	std::cin >> E;
 	std::cout << "conections: " << E << std::endl;
 	
-	Graph* g = new Graph(N);
-	Graph* copy = new Graph(g);
-
-// 	Graph2* g = new Graph2(N);
-// 	Graph2* copy = new Graph2(g);
-
-	
-	Node* nd;
+	g = new Graph(N);
 	
 	for(int t=0; t<N; t++) {
-		nd = g->getNodeAt(t);
-		nd->disable();
+		node = g->getNodeAt(t);
+		node->disable();
 		
 		Search::dfs(g);
 		
 		if(!g->allVisited()) {
-			update(&min, &max, nd->getId());
+			update(&min, &max, node->getId());
 			crucial++;
 		} else
 			std::cout << t << " all visited" << std::endl;
 		
-		g->getNodeAt(t)->enable();
+		node->enable();
 	}
 	
 	
@@ -62,15 +57,12 @@ void update(int* min, int* max, int id) {
 		
 		
 
-	std::cout << g;
-	std::cout << copy;
-	std::cout << std::endl;
+	std::cout << g << std::endl;
 	
 	std::cout << crucial << std::endl;
 	std::cout << min << " "<< max << std::endl;	
 
 	delete(g);
-	delete(copy);
 	std::cout << std::endl;
 	return 0;
  }

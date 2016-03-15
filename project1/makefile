@@ -1,7 +1,7 @@
-compile: clear .o .exe clean
-
 in=t02
 out=files/$(in).out
+
+compile: clear .o .exe clean
 
 clear:
 	@clear

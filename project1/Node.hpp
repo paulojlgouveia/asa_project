@@ -57,7 +57,7 @@ public:
 /*operators*/
 
 	friend std::ostream &operator<<(std::ostream &out, const Node *node) {
-		out << node->getId() << ":   ";
+		out << node->getId() << "|" << node->isActive() << ":   ";
 		
 		for(int t=0; t<node->getNumberOfConnections(); t++) {
 			if(t>0)

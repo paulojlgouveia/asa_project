@@ -1,5 +1,5 @@
-#ifndef __GRAPH_H__
-#define __GRAPH_H__
+#ifndef __GRAPH2_H__
+#define __GRAPH2_H__
 
 #include <iostream>
 #include <vector>
@@ -7,7 +7,7 @@
 #include "Node.hpp"
 
 
-// graph with only one connection per connection (from lowest to highest nodes)
+// graph with ywo connections per connection (one connection for each direction)
 class Graph {
 	
 	std::vector<Node*> _nodes; 
@@ -24,10 +24,8 @@ public:
 			std::cin >> one;
 			std::cin >> two;
 			
-			if(one<=two)
-				_nodes[one-1]->connect(_nodes[two-1]);
-			else
-				_nodes[two-1]->connect(_nodes[one-1]);
+			_nodes[one-1]->connect(_nodes[two-1]);	// vector starts at index 0
+			_nodes[two-1]->connect(_nodes[one-1]);	// file starts at 1
 		}
 	}
 	
@@ -45,14 +43,13 @@ public:
 			delete(_nodes[t]);
 	}
 	
-	
 /*getters*/
-	
+
 	int getNumberOfNodes() const { return _nodes.size(); }
 	
 	Node* getNodeAt(int index) const { return _nodes[index]; }
 	
-	bool allVisited() const {
+	bool allVisited() {
 		for(Node* node : _nodes)
 			if(node->visited() == false)
 				return false;
@@ -60,9 +57,8 @@ public:
 		return true;
 	}
 	
-	
 /*operators*/
-
+	
 	friend std::ostream &operator<<(std::ostream &out, const Graph *graph) {
 		out << std::endl;
 		for(int t=0; t<graph->getNumberOfNodes(); t++) {
