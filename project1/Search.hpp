@@ -33,7 +33,7 @@ public:
 	static Solution findArticulationNodes(Graph* g) {
 		
 		return Search::findArticulationNodes_tarjan_modified(g);
-// 		return findArticulationNodes_standard_dfs(g);
+// 		return Search::findArticulationNodes_standard_dfs(g);
 
 	}
 	
@@ -55,7 +55,7 @@ public:
 		}
 
 		for(int t=0; t<g->getNumberOfNodes(); t++) {
-			if((*artNodes)[t] == true) {
+			if((*artNodes)[t] == true) {				
 				Search::updateSolution(&result, (t+1));
 			}
 		}
@@ -67,14 +67,13 @@ public:
 	
 	// recursive
 	static void articulationPoints(Graph* g, Node* parentNode, std::vector<bool>* artNodes, int* time) {
-		
+
 		int successors = 0;
 		
 		(*time)++;
-		parentNode->visit();
-		
-// 		std::cout << parentNode->getId() << std::endl;
+		parentNode->visit();		
 
+// 		std::cout << parentNode->getId() << g << std::endl;
 		
 		parentNode->setDiscoveryTime(*time);
 		parentNode->setLow(*time);
@@ -102,15 +101,17 @@ public:
 				// 1- parentNode is the root of dfs tree and has two or more successors
 				
 				if(parentNode->getParent() == NULL && successors >= 2) {
-// 					artNodes->push_back(parentNode->getId());
+					std::cout << "COND-1: "<< successorNode->getId()
+								<< " -> " << parentNode->getId() << std::endl;
 					(*artNodes)[parentNode->getId()-1] = true;
 				}
 
 				// 2- parentNode is not root,
 				// and low value of one of its successors is higher than discovery value of parentNode
 				
-				if(parentNode->getParent() != NULL && successorNode->getLow() > parentNode->getDiscoveryTime()) {
-// 					artNodes->push_back(parentNode->getId());
+				if(parentNode->getParent() != NULL && successorNode->getLow() >= parentNode->getDiscoveryTime()) {
+					std::cout << "COND-2: "<< successorNode->getId()
+								<< " -> " << parentNode->getId() << std::endl;
 					(*artNodes)[parentNode->getId()-1] = true;
 				}
 

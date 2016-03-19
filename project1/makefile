@@ -1,4 +1,4 @@
-in=t04
+in=bt
 out=files/$(in).out
 
 compile: clear .o .exe clean

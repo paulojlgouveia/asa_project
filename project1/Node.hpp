@@ -74,13 +74,13 @@ public:
 		std::list<Node*>* adj = node->getAdjacenciesList();
 		std::list<Node*>::iterator adj_iter;
 		
-		out << node->getId() << "|" << node->isActive() << ":   ";
+		out << node->getId() << "|" << node->visited() << ":   ";
 		
 		for(adj_iter=adj->begin(); adj_iter!=adj->end(); adj_iter++) {
 			if(adj_iter != adj->begin())
 				out << " ,  ";
 			out << (*adj_iter)->getId();
-			out << "|" << (*adj_iter)->isActive();
+			out << "|" << (*adj_iter)->visited();
 		}
 		
 		return out;

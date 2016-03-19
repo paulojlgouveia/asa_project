@@ -189,15 +189,13 @@ public:
 				// parentNode is articulation node if:
 				
 				// 1- parentNode is the root of dfs tree and has two or more successors
-				
 				if(parentNode->getParent() == NULL && successors >= 2) {
 					(*artNodes)[parentNode->getId()-1] = true;
 				}
 
 				// 2- parentNode is not root,
 				// and low value of one of its successors is higher than discovery value of parentNode
-				
-				if(parentNode->getParent() != NULL && successorNode->getLow() > parentNode->getDiscoveryTime()) {
+				if(parentNode->getParent() != NULL && successorNode->getLow() >= parentNode->getDiscoveryTime()) {
 					(*artNodes)[parentNode->getId()-1] = true;
 				}
 
