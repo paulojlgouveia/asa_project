@@ -1,9 +1,5 @@
-test_in=files/t02
-test_out=$(test_in).out
-
-merge_in=Graph.hpp main.cpp
-merge_out=al095.cpp
-
+in=t04
+out=files/$(in).out
 
 compile: clear .o .exe clean
 
@@ -11,24 +7,30 @@ clear:
 	@clear
 
 .o:
-	g++ -ansi -pedantic -Wall -c main.cpp -std=c++11
+	g++ -ansi -pedantic -Wall -c main.cpp
 
 .exe: 
-	g++ -o main main.o -std=c++11
+	g++ -o main main.o
 
 clean:
 	@rm -f *.o
 	@rm -f app
 
 run: 
-	./main < $(test_in).in
-	cat $(test_out)
+	./main < files/$(in).in
+	cat $(out)
 	@echo
 	
 memcheck:
-	valgrind --leak-check=full ./main < $(test_in).in
-	cat $(test_out)
+	valgrind --leak-check=full ./main < files/$(in).in
+	cat $(out)
 	@echo
 	
-merge:
-	./utils/merge $(merge_out) $(merge_in)
+	
+_sub:
+	g++ -o app -O3 -ansi -Wall al095.cpp -lm
+
+run_sub:
+	time ./app < files/$(in).in
+	cat $(out)
+	@echo

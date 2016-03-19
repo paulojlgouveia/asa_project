@@ -2,89 +2,96 @@
 #define __NODE_H__
 
 #include <iostream> 
-#include <vector>
+#include <list>
+
 
 class Node {
 	int _id;
+	std::list<Node*>* _adj;		// pointer because passable without copy
+	int _adj_size; 				// in c++98 getting list size is lenear (solved with iterator)
 	bool _visited;
-	std::vector<Node*> _activeNodes;
-	std::vector<Node*> _inactiveNodes;
+	
+	bool _active;				// used for N dfs
+	
+	Node* _parent;				// used to search articulation nodes
+	int _discovery;
+	int _low;
+
 	
 public:
 	
-	Node(int id) : _id(id), _visited(false) {}
+// 	Node(int id) : _id(id), _adj_size(0), _visited(false), _active(true) {
+// 		_adj = new std::list<Node*>();
+// 	}
 	
-	Node(Node* node) : _id(node->getId()), _visited(node->visited()) {
-		for (Node* nd : node->getActiveNodes())
-			addActiveNode(nd);
-			
-		for (Node* nd : node->getInactiveNodes())
-			addInactiveNode(nd);
+	Node(int id) :	_id(id), _adj_size(0), _visited(false),
+					_active(true),
+					_parent(NULL), _discovery(-1), _low(-1) {
+						
+		_adj = new std::list<Node*>();
 	}
 	
-	virtual ~Node() {}
+	virtual ~Node() { delete(_adj); }
+	
 	
 /*getters*/
 
 	int getId() const { return _id; }
-	
+	std::list<Node*>* getAdjacenciesList() const { return _adj; }
+	int getAdjacenciesSize() const { return _adj_size; }
 	bool visited() const { return _visited; }
 	
-	std::vector<Node*> getActiveNodes() { return _activeNodes; }
-	std::vector<Node*> getInactiveNodes() { return _inactiveNodes; }
+	int isActive() const { return _active; }
 	
-	int getActiveNodesNumber() const { return _activeNodes.size(); }
-	int getInactiveNodesNumber() const { return _inactiveNodes.size(); }
+	Node* getParent() const { return _parent; }
+	int getDiscoveryTime() const { return _discovery; }
+	int getLow() const { return _low; }
 	
-	Node* getActiveNodeAt(int index) const { return _activeNodes[index]; }
-	Node* getInactiveNodeAt(int index) const { return _inactiveNodes[index]; }
 	
 /*setters*/
-	
+
+	void setID(int id) { _id = id; }
 	void visit() { _visited = true; }
 	void resetVisit() { _visited = false; }
 	
+	void enable() { _active = true; }
+	void disable() { _active = false; }
+	
+	void setParent(Node* parent) { _parent = parent; }
+	void setDiscoveryTime(int dt) { _discovery = dt; }
+	void setLow(int low) { _low = low; }
+	
+	
 /*modifiers*/
 
-	void addActiveNode(Node* node) {
-		_activeNodes.push_back(node);
+	void connect(Node* adjacent) {
+		_adj->push_front(adjacent);
+		_adj_size++;
 	}
 	
-	void addInactiveNode(Node* node) {
-		_inactiveNodes.push_back(node);
-	}
 	
-	void deactivate(Node* node) {
-		for (int i = 0; i < getActiveNodesNumber(); i++){
-			if (node == getActiveNodeAt(i)) {
-				_inactiveNodes.push_back(getActiveNodeAt(i));
-				_activeNodes.erase(_activeNodes.begin() + i);
-			}
-		}
-	}
-	
-	void reactivate(Node* node) {
-		for (int i = 0; i < getInactiveNodesNumber(); i++){
-			if (node == getInactiveNodeAt(i)) {
-				_activeNodes.push_back(getInactiveNodeAt(i));
-				_inactiveNodes.erase(_inactiveNodes.begin() + i);
-			}
-		}
-	}
 	
 /*operators*/
 
 	friend std::ostream &operator<<(std::ostream &out, const Node *node) {
-		out << node->getId() << ":   ";
+				
+		std::list<Node*>* adj = node->getAdjacenciesList();
+		std::list<Node*>::iterator adj_iter;
 		
-		for (Node* nd : node->getActiveNodes())
-			out << nd->getId() << " ";
-			
-		for (Node* nd : node->getActiveNodes())
-			out << "(" << nd->getId() << ") ";
+		out << node->getId() << "|" << node->isActive() << ":   ";
+		
+		for(adj_iter=adj->begin(); adj_iter!=adj->end(); adj_iter++) {
+			if(adj_iter != adj->begin())
+				out << " ,  ";
+			out << (*adj_iter)->getId();
+			out << "|" << (*adj_iter)->isActive();
+		}
 		
 		return out;
 	}
+
+
+
 };
 
 
