@@ -20,10 +20,6 @@ class Node {
 	
 public:
 	
-// 	Node(int id) : _id(id), _adj_size(0), _visited(false), _active(true) {
-// 		_adj = new std::list<Node*>();
-// 	}
-	
 	Node(int id) :	_id(id), _adj_size(0), _visited(false),
 					_active(true),
 					_parent(NULL), _discovery(-1), _low(-1) {

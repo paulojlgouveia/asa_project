@@ -27,8 +27,8 @@ memcheck:
 	@echo
 	
 	
-_sub:
-	g++ -o app -O3 -ansi -Wall al095.cpp -lm
+sub:
+	g++ -o app -O3 -ansi -Wall al095_p1.cpp -lm
 
 run_sub:
 	time ./app < files/$(in).in
