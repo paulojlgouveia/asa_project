@@ -1,5 +1,10 @@
-in=bt
-out=files/$(in).out
+#target=src/
+target=submission/
+
+in=t04
+out=files/output/$(in).out
+
+
 
 compile: clear .o .exe clean
 
@@ -7,17 +12,17 @@ clear:
 	@clear
 
 .o:
-	g++ -ansi -pedantic -Wall -c main.cpp
+	g++ -ansi -pedantic -Wall -c $(target)/al095_p1.cpp
 
 .exe: 
-	g++ -o main main.o
+	g++ -o main al095_p1.o
 
 clean:
 	@rm -f *.o
 	@rm -f app
 
 run: 
-	./main < files/$(in).in
+	./main < files/input/$(in).in
 	cat $(out)
 	@echo
 	
@@ -25,12 +30,13 @@ memcheck:
 	valgrind --leak-check=full ./main < files/$(in).in
 	cat $(out)
 	@echo
+		
+generate:
+	python graph_generator.py
 	
-	
-sub:
-	g++ -o app -O3 -ansi -Wall al095_p1.cpp -lm
-
-run_sub:
-	time ./app < files/$(in).in
-	cat $(out)
-	@echo
+test:
+	for file in files/input/*.in; do \
+		echo $$file ; \
+		time ./main < $$file ; \
+		echo "\n"; \
+	done

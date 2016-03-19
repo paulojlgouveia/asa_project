@@ -2,9 +2,9 @@
 import random;
 
 # Numero de Vertices
-v = 10
+v = 500000
 # Numero de Arcos (para alem dos necessarios para ser um grafo ligado)
-a = 5
+a = 6000000
 
 
 ######################################################################
@@ -39,7 +39,7 @@ for i in range(a):
 			ma[c][x] = True
 			break
 
-with open(str(v)+"v"+str(a)+"a.graph", 'w') as out:
+with open("files/input/"+str(v)+"v_"+str(a)+"e.in", 'w') as out:
 	out.write(str(v) + " " + str(v+a)+"\n")
 	for x, i in enumerate(ma):
 		for y, h in enumerate(ma[x]):
