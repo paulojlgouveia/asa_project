@@ -213,10 +213,9 @@ public:
 /*************************************** main *******************************************/
 
  int main () {
-	 
 	int V = 0, E = 0;	
 	Graph* g;
-	Solution result;
+	Solution solution;
 	
 	std::cin >> V;
 	std::cin >> E;

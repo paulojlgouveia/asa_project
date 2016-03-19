@@ -1,15 +1,16 @@
 #ifndef __SOLUTION_H__
 #define __SOLUTION_H__
 
-
-// solution container
+//MERGE_START
+// structure representing the solution of our problem
 struct Solution {
-	int minID;
-	int maxID;
-	int artNodesCounter;
+	int minId;
+	int maxId;
+	int articulationNodes;
 	
-	Solution(): minID(-1), maxID(-1), artNodesCounter(0) {}
+	Solution(): minId(-1), maxId(-1), articulationNodes(0) {}
 	~Solution() {}
 };
+//MERGE_END
 
 #endif

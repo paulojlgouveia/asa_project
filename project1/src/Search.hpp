@@ -4,193 +4,96 @@
 #include <iostream>
 #include <stack>
 #include <list>
-
 #include "Graph.hpp"
 #include "Solution.hpp"
 
+//MERGE_START
 class Search {
-
+	
 public:
-	
-	Search() {}
-	~Search() {}
-	
-	static void updateSolution(Solution* result, int id) {
+	// updates solution values (struct solution)
+	static void updateSolution(Solution* solution, int id) {
+		solution->articulationNodes++;
 		
-		result->artNodesCounter++;
-		
-		if(result->minID == -1 || result->maxID == -1)
-			result->minID = result->maxID = id;
-		
-		else if(id < result->minID)
-			result->minID = id;
-		
-		else if(id > result->maxID)
-			result->maxID = id;
+		if(solution->minId == -1 || solution->maxId == -1)
+			solution->minId = solution->maxId = id;
+		else if(id < solution->minId)
+			solution->minId = id;
+		else if(id > solution->maxId)
+			solution->maxId = id;
 	}
 	
-	
-	static Solution findArticulationNodes(Graph* g) {
-		
-		return Search::findArticulationNodes_tarjan_modified(g);
-// 		return Search::findArticulationNodes_standard_dfs(g);
-
-	}
-	
-	
-/*********************** with tarjan modified *****************************/
-	
-	static Solution findArticulationNodes_tarjan_modified(Graph* g) {
-
-		// maybe create heap to store articulation nodes, geting min and max = log(v)
-		std::vector<bool>* artNodes = new std::vector<bool>(g->getNumberOfNodes());
-		Node* node;
-		Solution result;
-			
+	// finds articulation nodes and returns solution
+	static Solution findArticulationNodes(Graph* graph) {
 		int time = 0;
-		for(int t=0; t<g->getNumberOfNodes(); t++) {
-			node = g->getNodeAt(t);
+		Node* node;
+		Solution solution;
+		std::vector<bool>* artNodes = new std::vector<bool>(graph->getNumberOfNodes());
+			
+		for(int t = 0; t < graph->getNumberOfNodes(); t++) {
+			node = graph->getNodeAt(t);
 			if(!node->visited())
-				Search::articulationPoints(g, node, artNodes, &time);	
+				Search::articulationPoints(graph, node, artNodes, &time);	
 		}
 
-		for(int t=0; t<g->getNumberOfNodes(); t++) {
-			if((*artNodes)[t] == true) {				
-				Search::updateSolution(&result, (t+1));
+		for(int t = 0; t < graph->getNumberOfNodes(); t++) {
+			if((*artNodes)[t] == true) {
+				Search::updateSolution(&solution, (t + 1));
 			}
 		}
 		
 		delete(artNodes);		
-		return result;
+		return solution;
 	}
 	
-	
-	// recursive
-	static void articulationPoints(Graph* g, Node* parentNode, std::vector<bool>* artNodes, int* time) {
-
+	// find articulation nodes, algorithm main loop (recursive)
+	static void articulationPoints(Graph* graph, Node* parentNode, std::vector<bool>* artNodes, int* time) {
 		int successors = 0;
+		Node* successorNode;
+		std::list<Node*>::iterator adjIterator;
+		std::list<Node*>* adjList = parentNode->getAdjacenciesList();
 		
 		(*time)++;
-		parentNode->visit();		
-
-// 		std::cout << parentNode->getId() << g << std::endl;
-		
+		parentNode->setVisited(true);
 		parentNode->setDiscoveryTime(*time);
 		parentNode->setLow(*time);
 		
-		std::list<Node*>* adj = parentNode->getAdjacenciesList();
-		std::list<Node*>::iterator adj_iter;
-		Node* successorNode;
-		
-		for(adj_iter=adj->begin(); adj_iter!=adj->end(); adj_iter++) {
-			successorNode = *adj_iter;	// convert iterator to pointer just to make code simpler
+		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+			successorNode = *adjIterator;	// get iterator current node (code simplification)
 			
 			if(!successorNode->visited()) {
 				successors++;
 				successorNode->setParent(parentNode);
 				
-				articulationPoints(g, successorNode, artNodes, time);
+				articulationPoints(graph, successorNode, artNodes, time);
 				
-				//correct _low values
+				// correct parent's _low value
 				if(successorNode->getLow() < parentNode->getLow())
 					parentNode->setLow(successorNode->getLow());
-				
 				
 				// parentNode is articulation node if:
 				
 				// 1- parentNode is the root of dfs tree and has two or more successors
-				
 				if(parentNode->getParent() == NULL && successors >= 2) {
-					std::cout << "COND-1: "<< successorNode->getId()
-								<< " -> " << parentNode->getId() << std::endl;
-					(*artNodes)[parentNode->getId()-1] = true;
+					(*artNodes)[parentNode->getId() - 1] = true;
 				}
 
 				// 2- parentNode is not root,
 				// and low value of one of its successors is higher than discovery value of parentNode
-				
 				if(parentNode->getParent() != NULL && successorNode->getLow() >= parentNode->getDiscoveryTime()) {
-					std::cout << "COND-2: "<< successorNode->getId()
-								<< " -> " << parentNode->getId() << std::endl;
-					(*artNodes)[parentNode->getId()-1] = true;
+					(*artNodes)[parentNode->getId() - 1] = true;
 				}
 
 			} else {
 				if(successorNode != parentNode->getParent())
+				// if node was already visited update low and discovery points
 					if(successorNode->getDiscoveryTime() < parentNode->getLow())
 						parentNode->setLow(successorNode->getDiscoveryTime());
 			}
-			
-		}
-	
-	}
-	
-	
-/******************************* with N dfs *******************************/
-
-	static Solution findArticulationNodes_standard_dfs(Graph* g) {
-		
-		Node* node;
-		Solution result;
-		
-		for(int t=0; t<g->getNumberOfNodes(); t++) {		
-			node = g->getNodeAt(t);
-			node->disable();
-								
-			if (t>0)
-				Search::dfs(g->getNodeAt(0));
-			else
-				Search::dfs(g->getNodeAt(1));
-			
-			if (!g->allVisited()) {
-				Search::updateSolution(&result, node->getId());
-			}
-			
-			node->enable();
-			g->resetVisited();
-		}
-		
-		return result;
-	}
-	
-	
-/*auxilary funtions*/
-	
-	// iterative DFS
-	static void dfs(Node *startNode) {
-		std::stack<Node*> stack;
-		
-		std::list<Node*>* adj;
-		std::list<Node*>::iterator adj_iter;
-		
-		Node* node;
-
-		stack.push(startNode);
-		
-		while(stack.size() != 0){
-			node = stack.top();
-			node->visit();
-			stack.pop();
-
-			adj = node->getAdjacenciesList();
-
-			for(adj_iter=adj->begin(); adj_iter!=adj->end(); adj_iter++) {
-				if (!(*adj_iter)->visited())
-						if(node->isActive())
-							stack.push(*adj_iter);
-			}
 		}
 	}
-
-
-	
-	
-	
-	
-	
-	
 };
-
+//MERGE_END
 
 #endif
 

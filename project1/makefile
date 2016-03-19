@@ -1,12 +1,12 @@
-#target=src/
-target=submission/
+target=src/
+#target=submission/
 
-in=t04
+in=t01
 out=files/output/$(in).out
 
+files=src/Header.hpp src/Solution.hpp src/Node.hpp src/Graph.hpp src/Search.hpp src/main.cpp
 
-
-compile: clear .o .exe clean
+compile: clear merge .o .exe clean
 
 clear:
 	@clear
@@ -35,8 +35,14 @@ generate:
 	python graph_generator.py
 	
 test:
+	./tests.sh
+
+merge:
+	./utils/merge src/al095_p1.cpp ${files}
+
+other:
 	for file in files/input/*.in; do \
 		echo $$file ; \
-		time ./main < $$file ; \
+		time ./main < $$file > trash.txt ; \
 		echo "\n"; \
 	done

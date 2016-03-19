@@ -4,91 +4,57 @@
 #include <iostream> 
 #include <list>
 
-
+//MERGE_START
 class Node {
-	int _id;
-	std::list<Node*>* _adj;		// pointer because passable without copy
-	int _adj_size; 				// in c++98 getting list size is lenear (solved with iterator)
-	bool _visited;
-	
-	bool _active;				// used for N dfs
-	
-	Node* _parent;				// used to search articulation nodes
-	int _discovery;
-	int _low;
+	int _id;						// node id
+	int _adjSize; 					// size of adjacencies list
+	int _discoveryTime;				// time in which the node was discovered (used during search)
+	int _low;						// used to fing backedges (used during search)
+	bool _visited;					// marks the node as visited (used during search)
 
-	
+	Node* _parent;					// points to parent (used during search)
+	std::list<Node*>* _adjList;		// list of adjacent nodes
+
+// constructors
 public:
-	
-	Node(int id) :	_id(id), _adj_size(0), _visited(false),
-					_active(true),
-					_parent(NULL), _discovery(-1), _low(-1) {
-						
-		_adj = new std::list<Node*>();
+	Node(int id) : _id(id), _adjSize(0), _discoveryTime(-1),
+				   _low(-1), _visited(false), _parent(NULL) {
+		
+		_adjList = new std::list<Node*>();
 	}
-	
-	virtual ~Node() { delete(_adj); }
-	
-	
-/*getters*/
 
+// destructors
+public:
+	virtual ~Node() { delete(_adjList); }
+	
+	
+// getters
+public:
 	int getId() const { return _id; }
-	std::list<Node*>* getAdjacenciesList() const { return _adj; }
-	int getAdjacenciesSize() const { return _adj_size; }
+	int getAdjacenciesSize() const { return _adjSize; }
+	int getDiscoveryTime() const { return _discoveryTime; }
+	int getLow() const { return _low; }
 	bool visited() const { return _visited; }
 	
-	int isActive() const { return _active; }
-	
 	Node* getParent() const { return _parent; }
-	int getDiscoveryTime() const { return _discovery; }
-	int getLow() const { return _low; }
+	std::list<Node*>* getAdjacenciesList() const { return _adjList; }
 	
-	
-/*setters*/
-
-	void setID(int id) { _id = id; }
-	void visit() { _visited = true; }
-	void resetVisit() { _visited = false; }
-	
-	void enable() { _active = true; }
-	void disable() { _active = false; }
-	
-	void setParent(Node* parent) { _parent = parent; }
-	void setDiscoveryTime(int dt) { _discovery = dt; }
+// setters
+public:
+	void setId(int id) { _id = id; }
+	void setVisited(bool visited) { _visited = visited; }	
+	void setDiscoveryTime(int time) { _discoveryTime = time; }
 	void setLow(int low) { _low = low; }
-	
-	
-/*modifiers*/
 
+	void setParent(Node* parent) { _parent = parent; }	
+	
+// methods
+public:
 	void connect(Node* adjacent) {
-		_adj->push_front(adjacent);
-		_adj_size++;
+		_adjList->push_front(adjacent);
+		_adjSize++;
 	}
-	
-	
-	
-/*operators*/
-
-	friend std::ostream &operator<<(std::ostream &out, const Node *node) {
-				
-		std::list<Node*>* adj = node->getAdjacenciesList();
-		std::list<Node*>::iterator adj_iter;
-		
-		out << node->getId() << "|" << node->visited() << ":   ";
-		
-		for(adj_iter=adj->begin(); adj_iter!=adj->end(); adj_iter++) {
-			if(adj_iter != adj->begin())
-				out << " ,  ";
-			out << (*adj_iter)->getId();
-			out << "|" << (*adj_iter)->visited();
-		}
-		
-		return out;
-	}
-
-
-
 };
-
+//MERGE_END
 
 #endif

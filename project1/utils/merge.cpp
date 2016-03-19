@@ -1,8 +1,14 @@
+/**********************************************************************/
+/** Merge several files into a single one. Only lines between tokens **/
+/** will be merged. Put all the includes into a separate file.  	 **/ 
+/**	Developed by: DanielFigueira									 **/
+/**********************************************************************/
 #include <iostream> 
 #include <fstream>
 
 #define START_TOKEN "//MERGE_START"
 #define END_TOKEN "//MERGE_END"
+#define USE_SEPARATORS true
 
  int main (int argc, char* argv[]) {
 	std::string line;
@@ -32,6 +38,9 @@
 		}
 		
 		std::cout << "Merging " << argv[i] << "...";
+		if(USE_SEPARATORS)
+			outputFile << std::endl << "/*************************** "
+			<< argv[i] << " ***************************/" << std::endl;
 		
 		print = false;
 		empty = true;
