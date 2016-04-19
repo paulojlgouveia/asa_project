@@ -24,12 +24,18 @@ int main () {
 	}
 	
 	graph = new Graph(V, E);
-// 	solution = Search::function(graph, startNodes);
+	std::cout << graph << std::endl;
 
+	
+	Dijkstra::run(graph, 0);
+	std::cout << graph << std::endl;
+
+	
+	
+// 	solution = Search::function(graph, startNodes);
 // 	std::cout << solution.articulationNodes << std::endl;
 // 	std::cout << solution.minId << " " << solution.maxId << std::endl;
 	
-	std::cout << graph << std::endl;
 
 	delete(startNodes);
 	delete(graph);

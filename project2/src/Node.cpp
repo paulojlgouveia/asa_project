@@ -22,6 +22,9 @@
 	
 // setters
 	void Node::setId(int id) { _id = id; }
+	void Node::setPathCost(int cost) { _pathCost = cost; }
+
+	
 	void Node::setVisited(bool visited) { _visited = visited; }	
 	void Node::setParent(Node* parent) { _parent = parent; }	
 	
@@ -41,7 +44,7 @@
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList = node->getAdjacenciesList();
 		
-  		out << node->getId() << ":   ";
+  		out << node->getId() << " (" << node->getPathCost() << "):   ";
 		
 		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
  			if(adjIterator != adjList->begin())

@@ -1,13 +1,29 @@
+#ifndef __GRAPH_H__
+#define __GRAPH_H__
 
-#include "Graph.h"
+#include <iostream>
+#include <vector>
 
+#include "Node.h"
+
+
+class Graph {
+	int _vertices;					// number of vertices
+	int _edges;						// number of edges
+ 	std::vector<Node*> *_nodes;		// list of nodes
+	
+	
+public:
 	
 // constructors
-	Graph::Graph(int V, int E) : _vertices(V), _edges(E) {
+	Graph(int V, int E) : _vertices(V), _edges(E) {
 		int node1=0, node2=0, weight=0;
 		
-		for(int t = 1; t <= V; t++)
-			_nodes.push_back(new Node(t));
+// 		for(int t = 1; t <= V; t++)
+// 			_nodes.push_back(new Node(t));
+		
+		_nodes = new std::vector<Node*>();
+		_nodes->reserve(V);
 		
 		//read edges from stdin
 		for(int t = 0; t < _edges; t++) {
@@ -16,34 +32,37 @@
 			std::cin >> weight,
 			
 			//connect nodes (index = id - 1)
-			_nodes[node1-1]->connect(_nodes[node2 - 1], weight);
+			(*_nodes)[node1-1]->connect((*_nodes)[node2 - 1], weight);
 		}	
 	}
 
 	
 // destructors
-	Graph::~Graph() {
-		for(int t = 0; t < _vertices; t++)
-			delete(_nodes[t]);
+	~Graph() {
+		for(int t = 0; t < _vertices; t++) {
+			delete((*_nodes)[t]);
+		}
+		
+		delete(_nodes);
 	}
 	
 	
 // getters
-	int Graph::getNumberOfNodes() const { return _vertices; }
-	int Graph::getNumberOfEdges() const { return _edges; }
-	std::vector<Node*> Graph::getNodesArray() const { return _nodes; }
-	Node* Graph::getNodeAt(int index) const { return _nodes[index]; }
+	int getNumberOfNodes() const { return _vertices; }
+	int getNumberOfEdges() const { return _edges; }
+	std::vector<Node*>* getNodesArray() const { return _nodes; }
+	Node* getNodeAt(int index) const { return (*_nodes)[index]; }
 
 	
 // methods
-	void Graph::resetVisited() {
+	void resetVisited() {
 		for(int t = 0; t < _vertices; t++)
-			_nodes[t]->setVisited(false);
+			(*_nodes)[t]->setVisited(false);
 	}
 
-	bool Graph::allVisited() const {
+	bool allVisited() const {
 		for(int t = 0; t < _vertices; t++)
-			if(_nodes[t]->visited() == false)
+			if((*_nodes)[t]->visited() == false)
 				return false;
 		return true;
 	}
@@ -51,7 +70,7 @@
 	
 		
 // operators
-	std::ostream &operator<<(std::ostream &out, const Graph *graph) {
+	friend std::ostream &operator<<(std::ostream &out, const Graph *graph) {
 		
   		out << std::endl;
   		for(int t=0; t<graph->getNumberOfNodes(); t++) {
@@ -62,6 +81,14 @@
  	}
 	
 	
+
+};
+
+
+
+#endif
+
+
 
 
 

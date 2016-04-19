@@ -31,6 +31,8 @@ public:
 // getters
 	int getId() const { return _id; }
 	int getAdjacenciesSize() const { return _adjSize; }
+	int getPathCost() const { return _pathCost; }
+	
 	bool visited() const { return _visited; }
 	Node* getParent() const { return _parent; }
 	std::list<Edge*>* getAdjacenciesList() const { return _adjList; }
@@ -38,6 +40,8 @@ public:
 	
 // setters
 	void setId(int id) ;
+	void setPathCost(int cost);
+	
 	void setVisited(bool visited);
 	void setParent(Node* parent);	
 	

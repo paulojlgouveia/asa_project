@@ -2,13 +2,15 @@
 #define __SEARCH_H__
 
 #include <iostream>
-#include <algorithm>
 #include <stack>
 #include <list>
 #include "Graph.h"
+#include "Node.h"
+#include "BHeap.h"
+
 // #include "Solution.h"
 
-class Search {
+class Dijkstra {
 	
 public:
 // 	static void updateSolution(Solution* solution) {}
@@ -21,7 +23,9 @@ public:
 // 		d [s] ← 0
 
 	static void initializeSingleSource(Graph* graph, Node* s) {
-		
+// 		s->setPathCost(0);
+// 		for (int t = 1; t < graph->getNumberOfNodes(); t++)
+// 			graph->getNodeAt(t)->setCost(INT_MAX); //FIXME : CLIMITS?
 	}
 
 
@@ -30,8 +34,17 @@ public:
 // 			then	d [v ] ← d [u ] + w (u , v )
 // 					π[v ] ← u
 
-	static void relax(Node* node1, Node* node2, int weight) {
+	static void relax(Node *u, Node *v, int weight){
+// 		std::cout << "u: " << u->getId() << std::endl;
+// 		std::cout << "v: " << v->getId() << std::endl;
+// 		std::cout << "w: " << weight << std::endl;
+
 		
+		
+		if(v->getPathCost() > (u->getPathCost() + weight)) {
+			v->setPathCost(u->getPathCost() + weight);
+			v->setParent(u);
+		}
 	}
 
 
@@ -46,25 +59,34 @@ public:
 // 				for each v ∈ Adj [u]
 // 					do Relax(u, v , w )		✄ Actualização de Q
 
+	static void run(Graph* graph, int index) {
+		run(graph, graph->getNodeAt(index));
+	}
+
 	static void run(Graph* graph, Node* s) {
+		
+		std::cout << "s: " << s->getId()<< std::endl;
+
 		Node *node1, *node2;
 		int weight;
 		
 		std::list<Node*>* S = new std::list<Node*>();
 		
-// 		Heap<Node*>* Q = new Heap<Node*>(graph->getNodesArray());
-		std::vector<Node*>* Q = new std::vector<Node*>();
-		for(int t=0; t<graph->getNumberOfNodes(); t++)
-			S->push_back(graph->getNodeAt(t));
-		std::make_heap (Q->begin(), Q->end());
-		
+		BHeap* Q = new BHeap(graph->getNodesArray());
+
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList;
 		
+		s->setPathCost(0);
 		initializeSingleSource(graph, s);
 		
 		while(Q->size() > 0) {
-			node1 = Q->getMin();
+
+			std::cout << "Q: " << Q;
+			node1 = Q->getMinimum();
+			Q->pop_back();
+			std::cout << "extracted from Q: " << node1->getId() << std::endl<< std::endl;
+
 			S->push_front(node1);
 			
 			adjList = node1->getAdjacenciesList();
@@ -72,8 +94,7 @@ public:
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
 				relax(node1, node2, weight);
-				// FIXME update heap
-				
+				Q->sort();
 			}
 		}
 	}
