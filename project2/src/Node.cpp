@@ -1,9 +1,9 @@
 
-// #include "Edge.h"
+#include <climits>
 #include "Node.h"
 
 // constructors
-	Node::Node(int id) : _id(id), _adjSize(0), _discoveryTime(-1), _low(-1), _visited(false), _parent(NULL) {
+	Node::Node(int id) : _id(id), _adjSize(0), _pathCost(INT_MAX), _visited(false), _parent(NULL) {
 		_adjList = new std::list<Edge*>();
 	}
 
@@ -20,21 +20,9 @@
 	}
 	
 	
-// getters
-	int Node::getId() const { return _id; }
-	int Node::getAdjacenciesSize() const { return _adjSize; }
-	int Node::getDiscoveryTime() const { return _discoveryTime; }
-	int Node::getLow() const { return _low; }
-	bool Node::visited() const { return _visited; }
-	Node* Node::getParent() const { return _parent; }
-	std::list<Edge*>* Node::getAdjacenciesList() const { return _adjList; }
-	
-	
 // setters
 	void Node::setId(int id) { _id = id; }
 	void Node::setVisited(bool visited) { _visited = visited; }	
-	void Node::setDiscoveryTime(int time) { _discoveryTime = time; }
-	void Node::setLow(int low) { _low = low; }
 	void Node::setParent(Node* parent) { _parent = parent; }	
 	
 	

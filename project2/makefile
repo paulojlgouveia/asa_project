@@ -12,6 +12,7 @@ all: clean .o .exe clean
 	g++ -ansi -pedantic -Wall -c $(target)/Edge.cpp
 	g++ -ansi -pedantic -Wall -c $(target)/Node.cpp
 	g++ -ansi -pedantic -Wall -c $(target)/Graph.cpp
+# 	g++ -ansi -pedantic -Wall -c $(target)/Dijkstra.cpp
 	g++ -ansi -pedantic -Wall -c $(target)/main.cpp
 
 .exe: 

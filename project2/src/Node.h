@@ -12,10 +12,10 @@
 class Node {
 	int _id;						// node id
 	int _adjSize; 					// size of adjacencies list (because of c++98)
-	int _discoveryTime;				// time in which the node was discovered (used during search)
-	int _low;						// used to fing backedges (used during search)
-	bool _visited;					// marks the node as visited (used during search)
+	
+	int _pathCost;
 
+	bool _visited;
 	Node* _parent;					// points to parent (used during search)
 	std::list<Edge*>* _adjList;		// list of adjacent nodes
 
@@ -29,20 +29,16 @@ public:
 	virtual ~Node();
 	
 // getters
-	int getId() const ;
-	int getAdjacenciesSize() const ;
-	int getDiscoveryTime() const ;
-	int getLow() const ;
-	bool visited() const ;
-	Node* getParent() const ;
-	std::list<Edge*>* getAdjacenciesList() const ;
+	int getId() const { return _id; }
+	int getAdjacenciesSize() const { return _adjSize; }
+	bool visited() const { return _visited; }
+	Node* getParent() const { return _parent; }
+	std::list<Edge*>* getAdjacenciesList() const { return _adjList; }
 	
 	
 // setters
 	void setId(int id) ;
 	void setVisited(bool visited);
-	void setDiscoveryTime(int time);
-	void setLow(int low);
 	void setParent(Node* parent);	
 	
 	

@@ -4,6 +4,7 @@
 // #include "Solution.hpp"
 // #include "Search.hpp"
 #include "Graph.h"
+#include "Dijkstra.h"
 
 
 int main () {
