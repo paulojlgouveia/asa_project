@@ -31,15 +31,6 @@
 	}
 	
 	
-// setters
-	void Node::setId(int id) { _id = id; }
-	void Node::setPathCost(int cost) { _pathCost = cost; }
-
-	
-	void Node::setVisited(bool visited) { _visited = visited; }	
-	void Node::setParent(Node* parent) { _parent = parent; }	
-	
-	
 // methods
 	void Node::connect(Node* adjacent, int weight) {
 		Edge* edge = new Edge(adjacent, weight);
@@ -47,6 +38,27 @@
 		_adjList->push_front(edge);
 		_adjSize++;
 	}
+	
+
+	void Node::reweightEdges() {
+		std::list<Edge*>::iterator adjIterator;
+		std::list<Edge*>* adjList = getAdjacenciesList();
+		Edge *edge;	
+	
+		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+			edge = (*adjIterator);
+			
+			edge->setWeight(edge->getWeight() + getH() - edge->getNext()->getH());
+		}
+		
+		
+		
+		
+// 		_weight = _weight + node->getH() - _next->getH();
+	}
+
+	
+	
 	
 	
 // operators

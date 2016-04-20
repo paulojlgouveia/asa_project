@@ -14,6 +14,7 @@ class Node {
 	int _adjSize; 					// size of adjacencies list (because of c++98)
 	
 	int _pathCost;
+	int _h;
 
 	bool _visited;
 	Node* _parent;					// points to parent (used during search)
@@ -35,6 +36,7 @@ public:
 	int getId() const { return _id; }
 	int getAdjacenciesSize() const { return _adjSize; }
 	int getPathCost() const { return _pathCost; }
+	int getH() const { return _h; }
 	
 	bool visited() const { return _visited; }
 	Node* getParent() const { return _parent; }
@@ -42,16 +44,18 @@ public:
 	
 	
 // setters
-	void setId(int id) ;
-	void setPathCost(int cost);
+	void setId(int id) { _id = id; }
+	void setPathCost(int cost) { _pathCost = cost; }
+	void setH(int h) { _h = h; }
 	
-	void setVisited(bool visited);
-	void setParent(Node* parent);	
+	void setVisited(bool visited) { _visited = visited; }	
+	void setParent(Node* parent) { _parent = parent; }	
 	
 	
 // methods
 	void connect(Node* adjacent, int weight);
-	
+	void reweightEdges();
+
 	
 // operators
 	friend std::ostream &operator<<(std::ostream &out, const Node *node);

@@ -19,8 +19,8 @@
 // setters
 	void Edge::setNext(Node* next) { _next = next; }
 	void Edge::setWeight(int weight) { _weight = weight; }
+
+
+
 	
 	
-
-
-

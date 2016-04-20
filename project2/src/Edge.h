@@ -30,7 +30,7 @@ public:
 // setters
 	void setNext(Node* next) ;
 	void setWeight(int weight) ;
-	
+
 	
 // operators
 // 	inline friend std::ostream &operator<<(std::ostream &out, const Edge* edge) {

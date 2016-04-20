@@ -25,6 +25,17 @@ class Johnson {
 	}
 	
 	
+	static void copyCostToH(Graph *graph) {
+		Node *node;
+		
+		for(int t=0; t<graph->getNumberOfNodes(); t++) {
+			node = graph->getNodeAt(t);
+			node->setH(node->getPathCost());
+		}
+	}
+	
+	
+	
 public:
 
 	static void run(Graph *graph){		
@@ -32,6 +43,10 @@ public:
 		BellmanFord::run(graph, 0);
 		disconnectSource(graph);
 		
+		copyCostToH(graph);
+		
+// 		Dijkstra::run(graph, 1);
+
 	}
 
 	
