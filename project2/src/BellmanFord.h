@@ -2,7 +2,6 @@
 #define __BELLMANFORD_H__
 
 #include <iostream>
-#include <climits>
 #include "Dijkstra.h"
 #include "Graph.h"
 #include "Node.h"
@@ -10,8 +9,8 @@
 class BellmanFord {
 	
 	static void initializeSingleSource(Graph* graph, Node* s) {
-		for (int t = 1; t < graph->getNumberOfNodes(); t++)
-			graph->getNodeAt(t)->setPathCost(INT_MAX);
+		for (int t = 0; t < graph->getNumberOfNodes(); t++)
+			graph->getNodeAt(t)->setPathCost(9999999);
 		s->setPathCost(0);
 	}
 	
@@ -35,15 +34,21 @@ public:
 		
 		initializeSingleSource(graph, graph->getNodeAt(id)); //by default source index is zero
 		
-		for (int t = 1; t < graph->getNumberOfNodes(); t++){
-			u = graph->getNodeAt(t);
-			adjList = u->getAdjacenciesList();
-			
-			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-				v = (*adjIterator)->getNext();
-				weight = (*adjIterator)->getWeight();
-				relax(u, v, weight);
+		// do V-1 iterations
+		for (int t = 0; t < graph->getNumberOfNodes(); t++){
+		
+			// loop through all edges 									FIXME: KEEP LIST OF EDGES
+			for (int i = 0; i < graph->getNumberOfNodes(); i++){
+				u = graph->getNodeAt(i);
+				adjList = u->getAdjacenciesList();
+				
+				for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+					v = (*adjIterator)->getNext();
+					weight = (*adjIterator)->getWeight();
+					relax(u, v, weight);
+				}
 			}
+			
 		}
 		
 		// doesn't check for negative loops since there's no need
