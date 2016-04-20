@@ -41,7 +41,7 @@ public:
 // destructors
 	~Graph() {
 		for(int t = 0; t < _vertices; t++) {
-			delete((*_nodes)[t]);
+			delete(_nodes->at(t));
 		}
 		
 		delete(_nodes);

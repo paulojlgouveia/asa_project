@@ -28,6 +28,9 @@ public:
 // destructors
 	virtual ~Node();
 	
+	void clearAdjacencies();
+	void deleteAdjacencies();
+	
 // getters
 	int getId() const { return _id; }
 	int getAdjacenciesSize() const { return _adjSize; }

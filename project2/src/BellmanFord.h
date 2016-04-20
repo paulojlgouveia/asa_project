@@ -37,7 +37,7 @@ public:
 		// do V-1 iterations
 		for (int t = 0; t < graph->getNumberOfNodes(); t++){
 		
-			// loop through all edges 									FIXME: KEEP LIST OF EDGES
+			// loop through all edges
 			for (int i = 0; i < graph->getNumberOfNodes(); i++){
 				u = graph->getNodeAt(i);
 				adjList = u->getAdjacenciesList();

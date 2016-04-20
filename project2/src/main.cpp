@@ -6,6 +6,7 @@
 #include "Graph.h"
 #include "Dijkstra.h"
 #include "BellmanFord.h"
+#include "Johnson.h"
 
 
 int main () {
@@ -30,17 +31,19 @@ int main () {
 	Dijkstra::run(graph, 1);
 	std::cout << graph << std::endl;
 
-		
-	BellmanFord::run(graph, 3);
+	BellmanFord::run(graph, 1);
 	std::cout << graph << std::endl;
 
-	
+	Johnson::run(graph);
+	std::cout << graph << std::endl;
 	
 	
 // 	solution = Search::function(graph, startNodes);
 // 	std::cout << solution.articulationNodes << std::endl;
 // 	std::cout << solution.minId << " " << solution.maxId << std::endl;
 	
+	std::cout << "hello there" << std::endl;
+
 
 	delete(startNodes);
 	delete(graph);

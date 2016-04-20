@@ -66,7 +66,7 @@ public:
 		Node *node1, *node2;
 		int weight;
 		
-		std::list<Node*>* S = new std::list<Node*>();
+// 		std::list<Node*>* S = new std::list<Node*>();
 		
 // 		BHeap* Q = new BHeap(graph->getNodesArray());
 		BHeap* Q = new BHeap();
@@ -84,7 +84,7 @@ public:
 			Q->pop_back();
 			std::cout << "extracted from Q: " << node1->getId() << std::endl<< std::endl;
 
-			S->push_front(node1);
+// 			S->push_front(node1);
 			
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {	
@@ -98,6 +98,9 @@ public:
 					
 			}
 		}
+		
+// 		delete(S);
+		delete(Q);
 	}
 	
 };

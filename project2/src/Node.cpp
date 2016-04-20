@@ -9,14 +9,25 @@
 
 // destructors
 	Node::~Node() {
+		deleteAdjacencies();
+	}
+	
+	
+	void Node::deleteAdjacencies() {
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList = getAdjacenciesList();
+		
 		
 		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 			delete(*adjIterator);
 		}
 		
 		delete(_adjList);
+	}
+	
+	void Node::clearAdjacencies() {
+		deleteAdjacencies();
+		_adjList = new std::list<Edge*>();
 	}
 	
 	
