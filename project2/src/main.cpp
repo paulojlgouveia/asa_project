@@ -27,7 +27,7 @@ int main () {
 	graph = new Graph(V, E);
 	std::cout << graph << std::endl;
 	
-	Dijkstra::run(graph, 3);
+	Dijkstra::run(graph, 1);
 	std::cout << graph << std::endl;
 
 		

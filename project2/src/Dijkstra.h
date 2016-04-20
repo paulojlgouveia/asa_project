@@ -24,8 +24,8 @@ public:
 // 		d [s] ← 0
 
 	static void initializeSingleSource(Graph* graph, Node* s) {
-		for (int t = 1; t < graph->getNumberOfNodes(); t++)
-			graph->getNodeAt(t)->setPathCost(INT_MAX);
+		for (int t = 0; t < graph->getNumberOfNodes(); t++)
+			graph->getNodeAt(t)->setPathCost(9999);
 		s->setPathCost(0);
 	}
 
@@ -36,6 +36,7 @@ public:
 // 					π[v ] ← u
 
 	static void relax(Node *u, Node *v, int weight){
+		
 		if(v->getPathCost() > (u->getPathCost() + weight)) {
 			v->setPathCost(u->getPathCost() + weight);
 			v->setParent(u);
@@ -75,11 +76,11 @@ public:
 		std::list<Edge*>* adjList;
 		
 		initializeSingleSource(graph, s);
-		
+
 		while(Q->size() > 0) {
 
 			std::cout << "Q: " << Q;
-			node1 = Q->getMinimum();
+ 			node1 = Q->getMinimum();
 			Q->pop_back();
 			std::cout << "extracted from Q: " << node1->getId() << std::endl<< std::endl;
 
@@ -89,10 +90,12 @@ public:
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {	
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
-				relax(node1, node2, weight);
 				
 				if(node2->getParent() == NULL)
 					Q->push_back(node2);
+				
+				relax(node1, node2, weight);
+					
 			}
 		}
 	}
