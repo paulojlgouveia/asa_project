@@ -20,6 +20,8 @@ private:
 	
 public:
 	
+	BHeap() { }
+	
 	BHeap(std::vector<Node*> *vector) {
 		int size = vector->size();
 		
@@ -56,8 +58,15 @@ public:
 	int size() const { return _heap.size(); }
 	
 	
+	void push_back(Node *node) {
+		_heap.push_back(node);
+		std::sort(_heap.begin(), _heap.end(), compareFunction);		// O(N*log(N))
+	}
 	
-	void pop_back() { _heap.pop_back(); }
+	void pop_back() {
+		_heap.pop_back();
+		std::sort(_heap.begin(), _heap.end(), compareFunction);		// O(N*log(N))
+	}
 	
 	
 // operators

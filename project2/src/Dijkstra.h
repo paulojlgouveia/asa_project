@@ -72,7 +72,9 @@ public:
 		
 		std::list<Node*>* S = new std::list<Node*>();
 		
-		BHeap* Q = new BHeap(graph->getNodesArray());
+// 		BHeap* Q = new BHeap(graph->getNodesArray());
+		BHeap* Q = new BHeap();
+		Q->push_back(s);
 
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList;
@@ -94,7 +96,9 @@ public:
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
 				relax(node1, node2, weight);
-				Q->sort();
+					
+				if(node2->getParent() == NULL)
+					Q->push_back(node2);
 			}
 		}
 	}
