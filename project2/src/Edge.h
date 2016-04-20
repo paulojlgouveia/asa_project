@@ -1,19 +1,20 @@
 #ifndef __EDGE_H__
 #define __EDGE_H__
 
-#include <iostream> 
+#include <iostream>
 
 // #include "Node.h"
 
-class Node;
+//MERGE_START
 
+class Node;
 
 class Edge {
 	
 	Node* _next;
 	int _weight;
 
-	
+
 public:
 
 // constructors
@@ -39,7 +40,7 @@ public:
 // 	}
 
 };
-
+//MERGE_END
 
 
 #endif

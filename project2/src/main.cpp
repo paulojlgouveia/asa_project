@@ -8,7 +8,7 @@
 #include "BellmanFord.h"
 #include "Johnson.h"
 
-
+//MERGE_START
 int main () {
 	int V = 0, F=0, E = 0;
 	int temp = -1;
@@ -51,7 +51,7 @@ int main () {
 			std::cout << deslocationCost[u][v] << " \t";
 		}
 		std::cout << std::endl;
-	}	
+	}
 	
 	
 	
@@ -62,11 +62,17 @@ int main () {
 // 	std::cout << solution.minId << " " << solution.maxId << std::endl;
 
 // 	delete(deslocationCost);
+
+	for(int i=0; i<graph->getNumberOfNodes(); i++) {
+		delete(deslocationCost[i]);
+	}
+	delete(deslocationCost);
+
 	delete(graph);
 	return 0;
 	
 }
-
+//MERGE_END
 
 /*
 

@@ -11,6 +11,7 @@
 
 // #include "Solution.h"
 
+//MERGE_START
 class Dijkstra {
 	
 public:
@@ -50,7 +51,7 @@ public:
 // 		Initialize-Single-Source(G , s)
 // 		S ← 0 /
 // 		Q ← V [G]	✄ Fila de Prioridade
-// 
+//
 // 		while Q = 0 /
 // 			do u ← Extract-Min(Q)
 // 				S ← S ∪ {u }
@@ -89,7 +90,7 @@ public:
 // 			S->push_front(node1);
 			
 			adjList = node1->getAdjacenciesList();
-			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {	
+			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
 				
@@ -106,8 +107,7 @@ public:
 	}
 	
 };
-
-
+//MERGE_END
 
 #endif
 

@@ -7,7 +7,7 @@
 #include "Edge.h"
 #include "Node.h"
 
-
+//MERGE_START
 class Graph {
 	int _vertices;					// number of vertices
 	int _edges;						// number of edges
@@ -35,7 +35,7 @@ public:
 			//connect nodes (index = id - 1)
 // 			(*_nodes)[node1-1]->connect((*_nodes)[node2 - 1], weight);
 			_nodes->at(node1)->connect(_nodes->at(node2), weight);
-		}	
+		}
 	}
 
 	
@@ -76,16 +76,16 @@ public:
 		
   		out << std::endl;
   		for(int t=0; t<graph->getNumberOfNodes(); t++) {
- 			out << graph->getNodeAt(t) << std::endl;		 
+ 			out << graph->getNodeAt(t) << std::endl;
  		}
  		
- 		return out;	
+ 		return out;
  	}
 	
 	
 
 };
-
+//MERGE_END
 
 
 #endif

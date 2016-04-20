@@ -7,6 +7,7 @@
 #include "Dijkstra.h"
 #include "BellmanFord.h"
 
+//MERGE_START
 class Johnson {
 	
 	static void connectSource(Graph *graph) {
@@ -17,7 +18,7 @@ class Johnson {
 	static void disconnectSource(Graph *graph) {
 // 		std::list<Edge*>::iterator adjIterator;
 // 		std::list<Edge*>* adjList = (graph->getNodeAt(0))->getAdjacenciesList();
-// 		
+//
 // 		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 // 			delete(*adjIterator);
 // 		}
@@ -62,7 +63,7 @@ public:
 			graph->getNodeAt(t)->reweightEdges();
 		}
 		
-		std::cout << graph << std::endl;	
+		std::cout << graph << std::endl;
 		
 // 		for(int u = 1; u < 2; u++) {
 		for(int u = 1; u < graph->getNumberOfNodes(); u++) {
@@ -79,7 +80,7 @@ public:
 
 	
 };
-
+//MERGE_END
 
 
 #endif

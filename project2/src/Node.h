@@ -1,14 +1,14 @@
 #ifndef __NODE_H__
 #define __NODE_H__
 
-#include <iostream> 
+#include <iostream>
 #include <list>
 
 #include "Edge.h"
 
 // class Edge;
 
-
+//MERGE_START
 class Node {
 	int _id;						// node id
 	int _adjSize; 					// size of adjacencies list (because of c++98)
@@ -48,8 +48,8 @@ public:
 	void setPathCost(int cost) { _pathCost = cost; }
 	void setH(int h) { _h = h; }
 	
-	void setVisited(bool visited) { _visited = visited; }	
-	void setParent(Node* parent) { _parent = parent; }	
+	void setVisited(bool visited) { _visited = visited; }
+	void setParent(Node* parent) { _parent = parent; }
 	
 	
 // methods
@@ -63,7 +63,7 @@ public:
 
 	
 };
-
+//MERGE_END
 
 #endif
 

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 
+//MERGE_START
 
 // template <class T>
 class BHeap {
@@ -73,16 +74,19 @@ public:
 	friend std::ostream &operator<<(std::ostream &out, const BHeap *heap) {
 		
   		for(int t=0; t<heap->size(); t++) {
- 			out << heap->getNodeAt(t)->getId() << " ";		 
+ 			out << heap->getNodeAt(t)->getId() << " ";
  		}
  		
  		out << std::endl;
  		
- 		return out;	
+ 		return out;
  	}
-	
-	
-	
+};
+//MERGE_END
+
+
+
+#endif
 	
 /*
 
@@ -163,12 +167,6 @@ public:
 */
 
 
-};
-
-
-#endif
-
-
 
 
 
@@ -220,7 +218,7 @@ public:
 	void IncreaseKey(unsigned long element, const T& change);
 	void DecreaseKey(unsigned long element, const T& change);
 	unsigned long get_size(){return(heap_size_);}
-	// void Merge(class &Heap); 
+	// void Merge(class &Heap);
 };
 
 #endif

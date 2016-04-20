@@ -5,6 +5,7 @@
 #include "Graph.h"
 #include "Node.h"
 
+//MERGE_START
 class BellmanFord {
 	
 	static void initializeSingleSource(Graph* graph, Node* s) {
@@ -53,7 +54,7 @@ public:
 		// doesn't check for negative loops since there's no need
 	}
 };
-
+//MERGE_END
 
 #endif
 
