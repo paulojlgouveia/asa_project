@@ -16,13 +16,13 @@ class Graph {
 public:
 	
 // constructors
-	Graph(int V, int E) : _vertices(V), _edges(E) {
+	Graph(int V, int E) : _vertices(V+1), _edges(E) {
 		int node1=0, node2=0, weight=0;
 		
 		_nodes = new std::vector<Node*>();
-// 		_nodes->reserve(V);
+// 		_nodes->reserve(_vertices);
 		
-		for(int t = 1; t <= V; t++)
+		for(int t = 0; t < _vertices; t++)
 			_nodes->push_back(new Node(t));
 		
 		//read edges from stdin
@@ -33,7 +33,7 @@ public:
 			
 			//connect nodes (index = id - 1)
 // 			(*_nodes)[node1-1]->connect((*_nodes)[node2 - 1], weight);
-			_nodes->at(node1-1)->connect(_nodes->at(node2 - 1), weight);
+			_nodes->at(node1)->connect(_nodes->at(node2), weight);
 		}	
 	}
 
@@ -57,12 +57,12 @@ public:
 	
 // methods
 	void resetVisited() {
-		for(int t = 0; t < _vertices; t++)
+		for(int t = 0; t <= _vertices; t++)
 			(*_nodes)[t]->setVisited(false);
 	}
 
 	bool allVisited() const {
-		for(int t = 0; t < _vertices; t++)
+		for(int t = 0; t <= _vertices; t++)
 			if((*_nodes)[t]->visited() == false)
 				return false;
 		return true;

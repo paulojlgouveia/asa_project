@@ -1,7 +1,8 @@
-#ifndef __SEARCH_H__
-#define __SEARCH_H__
+#ifndef __DIJKSTRA_H__
+#define __DIJKSTRA_H__
 
 #include <iostream>
+#include <climits>
 #include <stack>
 #include <list>
 #include "Graph.h"
@@ -23,9 +24,9 @@ public:
 // 		d [s] ← 0
 
 	static void initializeSingleSource(Graph* graph, Node* s) {
-// 		s->setPathCost(0);
-// 		for (int t = 1; t < graph->getNumberOfNodes(); t++)
-// 			graph->getNodeAt(t)->setCost(INT_MAX); //FIXME : CLIMITS?
+		for (int t = 1; t < graph->getNumberOfNodes(); t++)
+			graph->getNodeAt(t)->setPathCost(INT_MAX);
+		s->setPathCost(0);
 	}
 
 
@@ -35,12 +36,6 @@ public:
 // 					π[v ] ← u
 
 	static void relax(Node *u, Node *v, int weight){
-// 		std::cout << "u: " << u->getId() << std::endl;
-// 		std::cout << "v: " << v->getId() << std::endl;
-// 		std::cout << "w: " << weight << std::endl;
-
-		
-		
 		if(v->getPathCost() > (u->getPathCost() + weight)) {
 			v->setPathCost(u->getPathCost() + weight);
 			v->setParent(u);
@@ -79,7 +74,6 @@ public:
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList;
 		
-		s->setPathCost(0);
 		initializeSingleSource(graph, s);
 		
 		while(Q->size() > 0) {
@@ -96,7 +90,7 @@ public:
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
 				relax(node1, node2, weight);
-					
+				
 				if(node2->getParent() == NULL)
 					Q->push_back(node2);
 			}

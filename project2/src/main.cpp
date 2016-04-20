@@ -5,6 +5,7 @@
 // #include "Search.hpp"
 #include "Graph.h"
 #include "Dijkstra.h"
+#include "BellmanFord.h"
 
 
 int main () {
@@ -25,11 +26,15 @@ int main () {
 	
 	graph = new Graph(V, E);
 	std::cout << graph << std::endl;
-
 	
 	Dijkstra::run(graph, 3);
 	std::cout << graph << std::endl;
 
+		
+	BellmanFord::run(graph, 3);
+	std::cout << graph << std::endl;
+
+	
 	
 	
 // 	solution = Search::function(graph, startNodes);
