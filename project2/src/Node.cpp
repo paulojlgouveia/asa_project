@@ -50,14 +50,14 @@
 			
 			edge->setWeight(edge->getWeight() + getH() - edge->getNext()->getH());
 		}
-		
-		
-		
-		
-// 		_weight = _weight + node->getH() - _next->getH();
 	}
 
-	
+	int Node::getReweightPathCost(Node *source) {
+		if(getPathCost() != 99999)
+			return getPathCost() - source->getH() + getH();
+		return getPathCost();
+	}
+
 	
 	
 	
@@ -67,7 +67,7 @@
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList = node->getAdjacenciesList();
 		
-  		out << node->getId() << " (" << node->getPathCost() << "):   ";
+  		out << node->getId() << " (" << node->getPathCost() << "|" << node->getH() << "):   ";
 		
 		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
  			if(adjIterator != adjList->begin())

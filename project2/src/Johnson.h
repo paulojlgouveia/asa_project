@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Graph.h"
 #include "Node.h"
+#include "Dijkstra.h"
 #include "BellmanFord.h"
 
 class Johnson {
@@ -38,15 +39,42 @@ class Johnson {
 	
 public:
 
-	static void run(Graph *graph){		
+	static int **run(Graph *graph){
+		
+// 		int deslocationCost[graph->getNumberOfNodes()][graph->getNumberOfNodes()];
+		
+		
+		int V = graph->getNumberOfNodes();
+		int **deslocationCost = new int*[V];
+		for(int i=0; i<V; i++) {
+			deslocationCost[i] = new int[V];
+		}
+		
+		
+		
 		connectSource(graph);
 		BellmanFord::run(graph, 0);
 		disconnectSource(graph);
+		std::cout << graph << std::endl;
 		
 		copyCostToH(graph);
+		for(int t = 1; t < graph->getNumberOfNodes(); t++){
+			graph->getNodeAt(t)->reweightEdges();
+		}
 		
-// 		Dijkstra::run(graph, 1);
+		std::cout << graph << std::endl;	
+		
+// 		for(int u = 1; u < 2; u++) {
+		for(int u = 1; u < graph->getNumberOfNodes(); u++) {
+			Dijkstra::run(graph, u);
+			std::cout << graph << std::endl;
 
+			for(int v = 1; v < graph->getNumberOfNodes(); v++){
+				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(u));
+			}
+		}
+		
+		return deslocationCost;
 	}
 
 	

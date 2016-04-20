@@ -2,7 +2,6 @@
 #define __BELLMANFORD_H__
 
 #include <iostream>
-#include "Dijkstra.h"
 #include "Graph.h"
 #include "Node.h"
 
@@ -10,7 +9,7 @@ class BellmanFord {
 	
 	static void initializeSingleSource(Graph* graph, Node* s) {
 		for (int t = 0; t < graph->getNumberOfNodes(); t++)
-			graph->getNodeAt(t)->setPathCost(9999999);
+			graph->getNodeAt(t)->setPathCost(99999);
 		s->setPathCost(0);
 	}
 	

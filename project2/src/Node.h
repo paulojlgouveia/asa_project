@@ -55,6 +55,7 @@ public:
 // methods
 	void connect(Node* adjacent, int weight);
 	void reweightEdges();
+	int getReweightPathCost(Node *source);
 
 	
 // operators

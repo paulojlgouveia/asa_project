@@ -14,38 +14,54 @@ int main () {
 	int temp = -1;
 	Graph* graph;
 // 	Solution solution;
-	std::vector<int>* startNodes = new std::vector<int>();
+// 	std::vector<int>* deslocationCost = new std::vector<int>();
+	
+	int **deslocationCost;
 	
 	std::cin >> V;
 	std::cin >> F;
 	std::cin >> E;
 	
+
 	for(int t=0; t<F; t++) {
 		std::cin >> temp;
-		startNodes->push_back(temp-1);
+// 		deslocationCost->push_back(temp-1);
 	}
 	
 	graph = new Graph(V, E);
 	std::cout << graph << std::endl;
 	
-	Dijkstra::run(graph, 1);
-	std::cout << graph << std::endl;
+// 	std::cout << "Dijkstra" << std::endl;
+// 	Dijkstra::run(graph, 1);
+// 	std::cout << graph << std::endl;
 
-	BellmanFord::run(graph, 1);
-	std::cout << graph << std::endl;
+// 	std::cout << "BellmanFord" << std::endl;
+// 	BellmanFord::run(graph, 1);
+// 	std::cout << graph << std::endl;
 
-	Johnson::run(graph);
+	std::cout << "Johnson" << std::endl;
+	deslocationCost = Johnson::run(graph);
 	std::cout << graph << std::endl;
 	
 	
-// 	solution = Search::function(graph, startNodes);
+	for(int u = 1; u < graph->getNumberOfNodes(); u++) {
+
+		std::cout << u << "| \t";
+		for(int v = 1; v < graph->getNumberOfNodes(); v++){
+			std::cout << deslocationCost[u][v] << " \t";
+		}
+		std::cout << std::endl;
+	}	
+	
+	
+	
+	
+	
+// 	solution = Search::function(graph, deslocationCost);
 // 	std::cout << solution.articulationNodes << std::endl;
 // 	std::cout << solution.minId << " " << solution.maxId << std::endl;
-	
-	std::cout << "hello there" << std::endl;
 
-
-	delete(startNodes);
+// 	delete(deslocationCost);
 	delete(graph);
 	return 0;
 	

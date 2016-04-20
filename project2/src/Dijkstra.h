@@ -24,8 +24,10 @@ public:
 // 		d [s] ← 0
 
 	static void initializeSingleSource(Graph* graph, Node* s) {
-		for (int t = 0; t < graph->getNumberOfNodes(); t++)
-			graph->getNodeAt(t)->setPathCost(9999);
+		for (int t = 0; t < graph->getNumberOfNodes(); t++) {
+			graph->getNodeAt(t)->setPathCost(99999);
+			graph->getNodeAt(t)->setParent(NULL);
+		}
 		s->setPathCost(0);
 	}
 
@@ -79,10 +81,10 @@ public:
 
 		while(Q->size() > 0) {
 
-			std::cout << "Q: " << Q;
+// 			std::cout << "Q: " << Q;
  			node1 = Q->getMinimum();
 			Q->pop_back();
-			std::cout << "extracted from Q: " << node1->getId() << std::endl<< std::endl;
+// 			std::cout << "extracted from Q: " << node1->getId() << std::endl<< std::endl;
 
 // 			S->push_front(node1);
 			
