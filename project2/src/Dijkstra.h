@@ -9,7 +9,7 @@
 #include "Node.h"
 #include "BHeap.h"
 
-// #include "Solution.h"
+#include <unistd.h>
 
 //MERGE_START
 class Dijkstra {
@@ -28,6 +28,7 @@ public:
 		for (int t = 0; t < graph->getNumberOfNodes(); t++) {
 			graph->getNodeAt(t)->setPathCost(99999);
 			graph->getNodeAt(t)->setParent(NULL);
+			graph->getNodeAt(t)->setVisited(false);
 		}
 		s->setPathCost(0);
 	}
@@ -43,6 +44,7 @@ public:
 		if(v->getPathCost() > (u->getPathCost() + weight)) {
 			v->setPathCost(u->getPathCost() + weight);
 			v->setParent(u);
+			v->setVisited(true);
 		}
 	}
 
@@ -52,7 +54,7 @@ public:
 // 		S ← 0 /
 // 		Q ← V [G]	✄ Fila de Prioridade
 //
-// 		while Q = 0 /
+// 		while Q != 0
 // 			do u ← Extract-Min(Q)
 // 				S ← S ∪ {u }
 // 				for each v ∈ Adj [u]
@@ -64,16 +66,15 @@ public:
 
 	static void run(Graph* graph, Node* s) {
 		
-		std::cout << "s: " << s->getId()<< std::endl;
+		std::cout << std::endl<< std::endl<< "s: " << s->getId() << std::endl;
 
 		Node *node1, *node2;
 		int weight;
 		
 // 		std::list<Node*>* S = new std::list<Node*>();
 		
-// 		BHeap* Q = new BHeap(graph->getNodesArray());
-		BHeap* Q = new BHeap();
-		Q->push_back(s);
+		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
+		Q->insert(s);
 
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList;
@@ -84,21 +85,23 @@ public:
 
 // 			std::cout << "Q: " << Q;
  			node1 = Q->getMinimum();
-			Q->pop_back();
-// 			std::cout << "extracted from Q: " << node1->getId() << std::endl<< std::endl;
+			Q->removeMinimum();
+			std::cout << node1->getId() << std::endl;
 
-// 			S->push_front(node1);
 			
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
 				
-				if(node2->getParent() == NULL)
-					Q->push_back(node2);
+// 				std::cout << node2->getId() << "\t";
+
+// 				if(node2->getParent() == NULL)
+				if(!node2->visited())
+					Q->insert(node2);
 				
 				relax(node1, node2, weight);
-					
+				usleep(5000);
 			}
 		}
 		

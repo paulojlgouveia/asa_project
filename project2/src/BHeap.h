@@ -1,310 +1,144 @@
-#ifndef __BINARYHEAP_H__
-#define __BINARYHEAP_H__
+#ifndef __BINARYMINHEAP_H__
+#define __BINARYMINHEAP_H__
 
 #include <iostream>
-#include <algorithm>
-#include <vector>
+#include "Node.h"
 
 //MERGE_START
 
-// template <class T>
-class BHeap {
+class BMinHeap {
+	Node **_data;
+	int _heapSize;
+	int _arraySize;
 
-private:
-	std::vector<Node*> _heap;
+	int getLeftChildIndex(int nodeIndex) {
+		return 2 * nodeIndex + 1;
+	}
 
+	int getRightChildIndex(int nodeIndex) {
+		return 2 * nodeIndex + 2;
+	}
 
-	static bool compareFunction(const Node *a, const Node *b) {
-		return (a->getPathCost() >= b->getPathCost());
+	int getParentIndex(int nodeIndex) {
+		return (nodeIndex - 1) / 2;
 	}
 	
-	
-public:
-	
-	BHeap() { }
-	
-	BHeap(std::vector<Node*> *vector) {
-		int size = vector->size();
+	void shiftUp(int nodeIndex) {
+		Node *temp;
+		int parentIndex;
 		
-// 		_heap = new std::vector<Node*>();							// O(1)
-		
-// 		_heap.reserve(size);										// O(1)
-// 		for(int t=0; t<size; t++) {									// O(N)
-// 			_heap[t] = vector->at(t);
-// 		}
-		
-		for(int t=0; t<size; t++) {									// O(N)
-			_heap.push_back(vector->at(t));
+		if (nodeIndex != 0) {
+			parentIndex = getParentIndex(nodeIndex);
+			if (_data[parentIndex]->getPathCost() > _data[nodeIndex]->getPathCost()) {
+				temp = _data[parentIndex];
+				_data[parentIndex] = _data[nodeIndex];
+				_data[nodeIndex] = temp;
+				shiftUp(parentIndex);
+			}
 		}
-				
-// 		std::make_heap(_heap.begin(), _heap.end(), compareFunction);		// O(3*N)
-		std::sort(_heap.begin(), _heap.end(), compareFunction);				// O(N*log(N))
 	}
 	
-	virtual ~BHeap() {
-// 		delete(_heap);
-	}
-	
-	
-	void sort() {
-// 		std::make_heap(v.begin(),v.end(), compareFunction);		// O(3*N)
-		std::sort(_heap.begin(), _heap.end(), compareFunction);		// O(N*log(N))
-	}
-	
-	
-	Node* getMaximum() const { return _heap[0]; }
-	Node* getMinimum() const { return _heap[_heap.size()-1]; }
-	
-	Node* getNodeAt(int index) const { return _heap.at(index); }
-	int size() const { return _heap.size(); }
-	
-	
-	void push_back(Node *node) {
-		_heap.push_back(node);
-		std::sort(_heap.begin(), _heap.end(), compareFunction);		// O(N*log(N))
-	}
-	
-	void pop_back() {
-		_heap.pop_back();
-		std::sort(_heap.begin(), _heap.end(), compareFunction);		// O(N*log(N))
-	}
-	
-	
-// operators
-	friend std::ostream &operator<<(std::ostream &out, const BHeap *heap) {
+	void shiftDown(int nodeIndex) {
+		Node *temp;
+		int leftChildIndex, rightChildIndex, minIndex;
 		
-  		for(int t=0; t<heap->size(); t++) {
- 			out << heap->getNodeAt(t)->getId() << " ";
- 		}
- 		
- 		out << std::endl;
+		leftChildIndex = getLeftChildIndex(nodeIndex);
+		rightChildIndex = getRightChildIndex(nodeIndex);
+		
+		if(rightChildIndex >= _heapSize) {
+			if(leftChildIndex >= _heapSize)
+				return;
+			else
+				minIndex = leftChildIndex;
+		} else {
+			if(_data[leftChildIndex]->getPathCost() <= _data[rightChildIndex]->getPathCost())
+				minIndex = leftChildIndex;
+			else
+				minIndex = rightChildIndex;
+		}
+		
+		if(_data[nodeIndex]->getPathCost() > _data[minIndex]->getPathCost()) {
+			temp = _data[minIndex];
+			_data[minIndex] = _data[nodeIndex];
+			_data[nodeIndex] = temp;
+			shiftDown(minIndex);
+		}
+	}
+
+public:
+	BMinHeap(int size) {
+		_data = new Node*[size];
+		_heapSize = 0;
+		_arraySize = size;
+	}
+	
+	~BMinHeap() {
+		delete[] _data;
+	}
+	
+	bool isEmpty() { return (_heapSize == 0); }
+	int size() const { return _heapSize; }
+	int capacity() const { return _arraySize; }
+	Node* at(int index) const { return _data[index]; }
+	
+	Node* getMinimum() {
+		if (isEmpty())
+			throw std::string("Heap is empty");
+		else
+			return _data[0];
+	}
+
+	void removeMinimum() {
+		if(isEmpty()) {
+			throw std::string("Heap is empty");
+		} else {
+			_data[0] = _data[_heapSize - 1];
+			_heapSize--;
+			if (_heapSize > 0)
+				shiftDown(0);
+		}
+	}
+	
+	void insert(Node* node) {
+		if (_heapSize == _arraySize) {
+			throw std::string("Heap's underlying storage is overflow");
+		} else {
+			_heapSize++;
+			_data[_heapSize - 1] = node;
+			shiftUp(_heapSize - 1);
+		}
+	}
+	
+	
+	friend std::ostream &operator<<(std::ostream &out, const BMinHeap *heap) {
+		out << std::endl;
+		out << "heap size: " << heap->size() << std::endl;
+		out << "max heap size: " << heap->capacity() << std::endl;
+		
+  		for(int t=0; t<heap->size(); t++)
+ 			out << heap->at(t) << " ";
  		
  		return out;
  	}
+	
+	friend std::ostream &operator<<(std::ostream &out, const BMinHeap &heap) {
+		out << std::endl;
+		out << "heap size: " << heap.size() << std::endl;
+		out << "max heap size: " << heap.capacity() << std::endl;
+		
+  		for(int t=0; t<heap.size(); t++)
+			out << heap.at(t) << " ";
+ 		
+ 		return out;
+ 	}
+
 };
+
 //MERGE_END
 
 
 
 #endif
-	
-/*
-
-// 	Max-Heapify(A, i)
-// 		l ← Left(i)
-// 		r ← Right(i)
-// 		if l ≤ heap-size[A] and A[l] > A[i]
-// 			then largest ← l
-// 			else largest ← i
-// 		if r ≤ heap-size[A] and A[r ] > A[largest]
-// 			then largest ← r
-// 		if largest = i
-// 			then exchange A[i] ↔ A[largest]
-// 				 Max-Heapify(A, largest)
-	
-	void maxHeapify(int index) {
-		int l = -1, r = -1, largest = -1;
-		
-		if(l <= heap->size() && heap[l]->getPathCost() > heap[i]->getPathCost()) {
-			largest = l;
-		} else {
-			largest = i;
-		}
-		
-		if(l <= heap->size() && heap[r]->getPathCost() > heap[largest]->getPathCost()) {
-			largest = r;
-		}
-		
-		if(largest == i) {
-			Node *temp = heap[i];
-			heap[i] = heap[largest];
-			heap[largest] = temp;
-			
-			maxHeapify(largest);
-		}
-
-	}
-
-	
-// 	Build-Max-Heap(A)
-// 		heap-size[A] ← length[A]
-// 		for i ← length[A]/2 downto 1
-// 			do Max-Heapify(A, i)
-
-	void buildMaxHeap() {
-		for(int t=heap->size()/2; i>=1; i--)
-			maxHeapify(t);
-	}
-	
-	T *extractMax() {
-		
-	}
-
-	T *extractMin() {
-		
-	}
-
-	
-// 	Heap-Sort(A)
-// 		Build-Max-Heap(A)
-// 		for i ← length[A] downto 2
-// 			do  exchange A[1] ↔ A[i]
-// 				heap-size[A] ← heap-size[A] − 1
-// 				Max-Heapify(A, 1)
-	
-	void sort() {
-		buildMaxHeap();
-		for(int t=heap->size(); t>=2; t--){
-			Node *temp = heap[0];
-			heap[i] = heap[largest];
-			heap[largest] = temp;
-			
-			maxHeapify(largest);
-		}
-	}
-
-
-*/
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-#ifndef __BINARYHEAP_H__
-#define __BINARYHEAP_H__
-
-#include <vector>
-#include <iterator>
-#include <cmath>
-
-// Assume min heap
-template <class T>
-class BinaryHeap {
-	
-private:
-	unsigned long heap_size_;
-	std::vector<T> data_;
-	// typedef typename std::vector<T>size_type heap_size_;
-	void SiftUp(unsigned long node);
-	void SiftDown(unsigned long node);
-
-public:
-	BinaryHeap(unsigned long num_elements);
-	BinaryHeap();
-	~BinaryHeap() {}
-
-	// Misc Operations (using STL namimg).
-	unsigned long count() { return heap_size_;}  // Get count of objects.
-	void clear();                      // clear the object for reuse.
-
-	// Main operations allowed by the data structure.
-	template <class I>
-	int Heapify(I start, I end);
-	const T FindXtrma();
-	const T ExtractXtrma();
-	void Insert(const T& data);   // Insert(key)
-	void Delete(unsigned long element);     // Delete(element)
-	void IncreaseKey(unsigned long element, const T& change);
-	void DecreaseKey(unsigned long element, const T& change);
-	unsigned long get_size(){return(heap_size_);}
-	// void Merge(class &Heap);
-};
-
-#endif
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-#ifndef __BHEAP_H__
-#define __BHEAP_H__
-#include <iostream>
-#include <string>
-
-using namespace std;
-template<class T>
-
-class BHeap {
-	
-private:
-	const int DEFAULT_SIZE;
-	T *data;  //array of data in the heap
-	int m_count; //count the number of element in the heap
-	int m_capacity; //to indicate the current capacity in the heap
-	bool sorted; //boolean variable to test whether it is sorted
-	
-	
-public:
-	BHeap() : DEFAULT_SIZE(100) {
-		data = new T[DEFAULT_SIZE];
-		m_capacity = DEFAULT_SIZE;
-		m_count = 0;
-	}
-	
-	~BHeap() {
-		delete [] data;
-	}
-	
-	int size() const {
-		return m_count;
-	}
-
-	bool isEmpty() const {
-		return m_count == 0;
-	}
-
-	void setCapacity(int newCapacity) {
-		if ( newCapacity > m_capacity) {
-			//allocate new capacity
-			T *newData = new T[newCapacity];
-			memcpy_s(newData, newCapacity, data, m_count);
-			m_capacity = newCapacity;
-			//copy old data to new data
-			data = newData;
-			
-			delete [] newData;
-		}
-	
-	}
-
-	void Add(T item);
-	void DownHeap();
-	void UpHeap();
-
-	T Peek();
-	T Remove();
-	
-	
-private:
-	
-	int Child1(int idx){
-		return (idx << 1) + 1;  //Child 1 index = (2 * parentIndex) + 1
-	}
-	
-	int Child2(int idx){
-		return (idx << 1) + 2;  //Child 2 index = (2 * parentIndex ) +2
-	}
-	
-	int Parent(int idx){
-		return (idx - 1 ) >> 1; //Parent index = (childIndex -1 ) / 2
-	}
-	
-	//void EnsureSort();
-};
-
-
-#endif
-
-*/
