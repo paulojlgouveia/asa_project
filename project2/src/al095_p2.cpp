@@ -146,12 +146,12 @@ Node::~Node() {
 void Node::deleteAdjacencies() {
 	std::list<Edge*>::iterator adjIterator;
 	std::list<Edge*>* adjList = getAdjacenciesList();
-	
-	
+
+
 	for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 		delete(*adjIterator);
 	}
-	
+
 	delete(_adjList);
 }
 
@@ -208,11 +208,6 @@ std::ostream &operator<<(std::ostream &out, const Node *node) {
 	
  	return out;
  }
-
- 	
-
-
-
 
 
 /*************************** src/Graph.h ***************************/
@@ -561,35 +556,30 @@ class Johnson {
 	
 public:
 
-	static int **run(Graph *graph){
+	static int **run(Graph *graph, std::vector<int> *subsidiaries){
 		
-// 		int deslocationCost[graph->getNumberOfNodes()][graph->getNumberOfNodes()];
-		
-		
-		int V = graph->getNumberOfNodes();
-		int **deslocationCost = new int*[V];
-		for(int i=0; i<V; i++) {
-			deslocationCost[i] = new int[V];
+		int F = subsidiaries->size();
+		int **deslocationCost = new int*[F];
+		for(int i=0; i<F; i++) {
+			deslocationCost[i] = new int[graph->getNumberOfNodes()];
 		}
-		
-		
 		
 		connectSource(graph);
 		BellmanFord::run(graph, 0);
 		disconnectSource(graph);
-		std::cout << graph << std::endl;
+// 		std::cout << graph << std::endl;
 		
 		copyCostToH(graph);
 		for(int t = 1; t < graph->getNumberOfNodes(); t++){
 			graph->getNodeAt(t)->reweightEdges();
 		}
+
+// 		std::cout << "before dijkstra " << graph << std::endl;	
+
 		
-		std::cout << graph << std::endl;
-		
-// 		for(int u = 1; u < 2; u++) {
-		for(int u = 1; u < graph->getNumberOfNodes(); u++) {
-			Dijkstra::run(graph, u);
-			std::cout << graph << std::endl;
+		for(int u = 0; u < F; u++) {
+			Dijkstra::run(graph, subsidiaries->at(u));
+// 			std::cout << "after dijkstra " << graph << std::endl;
 
 			for(int v = 1; v < graph->getNumberOfNodes(); v++){
 				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(u));
@@ -605,12 +595,55 @@ public:
 
 /*************************** src/main.cpp ***************************/
 
+
+void printSolution(int **deslocationCost, std::vector<int>* subsidiaries, int V) {
+	
+	int location = 0, total_loss = 0, loss = 99999, new_loss;
+	int v = 1;
+	unsigned int u = 0;
+	bool possible = true;
+	
+	for(v = 1; v < V; v++) {
+		new_loss = 0;
+		for(u = 0; u < subsidiaries->size(); u++) {
+			new_loss = new_loss + deslocationCost[u][v];
+		}
+		
+		if(new_loss < loss) {
+			subsidiaries->at(u-1) = deslocationCost[u-1][v];
+			location = v;
+			loss = new_loss;
+		}
+
+	}
+	
+	for(unsigned int t=0; t<subsidiaries->size(); t++) {
+		loss = deslocationCost[t][location];
+		
+		if(loss == 99999) {
+			possible = false;
+			break;
+		}
+		
+		total_loss += loss;
+	}
+	
+	if(possible) {
+		std::cout << location << " " << total_loss << std::endl;
+		for(unsigned int t=0; t<subsidiaries->size(); t++) 
+			std::cout << deslocationCost[t][location] << " ";
+	} else {
+		std::cout << "N";
+	}
+	
+	std::cout << std::endl;
+}
+
 int main () {
 	int V = 0, F=0, E = 0;
 	int temp = -1;
 	Graph* graph;
-// 	Solution solution;
-// 	std::vector<int>* deslocationCost = new std::vector<int>();
+	std::vector<int>* subsidiaries = new std::vector<int>();
 	
 	int **deslocationCost;
 	
@@ -621,11 +654,11 @@ int main () {
 
 	for(int t=0; t<F; t++) {
 		std::cin >> temp;
-// 		deslocationCost->push_back(temp-1);
+		subsidiaries->push_back(temp);
 	}
-	
+
 	graph = new Graph(V, E);
-	std::cout << graph << std::endl;
+// 	std::cout << graph << std::endl;
 	
 // 	std::cout << "Dijkstra" << std::endl;
 // 	Dijkstra::run(graph, 1);
@@ -635,34 +668,29 @@ int main () {
 // 	BellmanFord::run(graph, 1);
 // 	std::cout << graph << std::endl;
 
-	std::cout << "Johnson" << std::endl;
-	deslocationCost = Johnson::run(graph);
-	std::cout << graph << std::endl;
+// 	std::cout << "Johnson" << std::endl;
+	deslocationCost = Johnson::run(graph, subsidiaries);
+// 	std::cout << graph << std::endl;
+// 	
+// 	std::cout << "\t1 \t2 \t3 \t4 \t5 \t6" << std::endl;
+// 	std::cout << "  ----------------------------------------------------" << std::endl;
+// 	for(unsigned int u = 0; u < subsidiaries->size(); u++) {
+// 		std::cout << u << "| \t";
+// 		for(int v = 1; v < graph->getNumberOfNodes(); v++){
+// 			std::cout << deslocationCost[u][v] << " \t";
+// 		}
+// 		std::cout << std::endl;
+// 	}
+// 	std::cout << std::endl;
 	
+	printSolution(deslocationCost, subsidiaries, graph->getNumberOfNodes());
 	
-	for(int u = 1; u < graph->getNumberOfNodes(); u++) {
-
-		std::cout << u << "| \t";
-		for(int v = 1; v < graph->getNumberOfNodes(); v++){
-			std::cout << deslocationCost[u][v] << " \t";
-		}
-		std::cout << std::endl;
-	}
+	// free memory
+	for(int i=0; i<F; i++)
+		delete[] deslocationCost[i];
+	delete[] deslocationCost;
 	
-	
-	
-	
-	
-// 	solution = Search::function(graph, deslocationCost);
-// 	std::cout << solution.articulationNodes << std::endl;
-// 	std::cout << solution.minId << " " << solution.maxId << std::endl;
-
-// 	delete(deslocationCost);
-
-	for(int i=0; i<graph->getNumberOfNodes(); i++) {
-		delete(deslocationCost[i]);
-	}
-	delete(deslocationCost);
+	delete(subsidiaries);
 
 	delete(graph);
 	return 0;
