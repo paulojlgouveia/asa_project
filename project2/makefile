@@ -1,7 +1,7 @@
 target=src
 #target=submission/
 
-in=3
+in=t03
 out=files/output/$(in).out
 
 files=src/Header.h src/Edge.h src/Node.h src/Edge.cpp src/Node.cpp src/Graph.h src/BHeap.h src/Dijkstra.h src/BellmanFord.h src/Johnson.h src/main.cpp
@@ -11,8 +11,6 @@ all: clean .o .exe clean
 .o:
 	g++ -ansi -pedantic -Wall -c $(target)/Edge.cpp
 	g++ -ansi -pedantic -Wall -c $(target)/Node.cpp
-# 	g++ -ansi -pedantic -Wall -c $(target)/Graph.cpp
-# 	g++ -ansi -pedantic -Wall -c $(target)/Dijkstra.cpp
 	g++ -ansi -pedantic -Wall -c $(target)/main.cpp
 
 .exe: 

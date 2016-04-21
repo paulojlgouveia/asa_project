@@ -66,7 +66,7 @@ public:
 
 	static void run(Graph* graph, Node* s) {
 		
-		std::cout << std::endl<< std::endl<< "s: " << s->getId() << std::endl;
+// 		std::cout << std::endl<< std::endl<< "s: " << s->getId() << std::endl;
 
 		Node *node1, *node2;
 		int weight;
@@ -86,7 +86,8 @@ public:
 // 			std::cout << "Q: " << Q;
  			node1 = Q->getMinimum();
 			Q->removeMinimum();
-			std::cout << node1->getId() << std::endl;
+			node1->setVisited(true);
+// 			std::cout << node1->getId() << std::endl;
 
 			
 			adjList = node1->getAdjacenciesList();
@@ -101,7 +102,7 @@ public:
 					Q->insert(node2);
 				
 				relax(node1, node2, weight);
-				usleep(5000);
+// 				usleep(5000);
 			}
 		}
 		
