@@ -16,12 +16,12 @@ Node::~Node() {
 void Node::deleteAdjacencies() {
 	std::list<Edge*>::iterator adjIterator;
 	std::list<Edge*>* adjList = getAdjacenciesList();
-	
-	
+
+
 	for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 		delete(*adjIterator);
 	}
-	
+
 	delete(_adjList);
 }
 
@@ -78,7 +78,7 @@ std::ostream &operator<<(std::ostream &out, const Node *node) {
 	
  	return out;
  }
-//MERGE_START
+//MERGE_END
  	
 
 

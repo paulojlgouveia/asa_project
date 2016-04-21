@@ -11,12 +11,12 @@ all: clean .o .exe clean
 .o:
 	g++ -ansi -pedantic -Wall -c $(target)/Edge.cpp
 	g++ -ansi -pedantic -Wall -c $(target)/Node.cpp
-	g++ -ansi -pedantic -Wall -c $(target)/Graph.cpp
+# 	g++ -ansi -pedantic -Wall -c $(target)/Graph.cpp
 # 	g++ -ansi -pedantic -Wall -c $(target)/Dijkstra.cpp
 	g++ -ansi -pedantic -Wall -c $(target)/main.cpp
 
-.exe:
-	g++ -o main Edge.o Node.o Graph.o main.o
+.exe: 
+	g++ -o main Edge.o Node.o main.o
 	@rm -f *.o
 
 clean:

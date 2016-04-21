@@ -40,35 +40,30 @@ class Johnson {
 	
 public:
 
-	static int **run(Graph *graph){
+	static int **run(Graph *graph, std::vector<int> *subsidiaries){
 		
-// 		int deslocationCost[graph->getNumberOfNodes()][graph->getNumberOfNodes()];
-		
-		
-		int V = graph->getNumberOfNodes();
-		int **deslocationCost = new int*[V];
-		for(int i=0; i<V; i++) {
-			deslocationCost[i] = new int[V];
+		int F = subsidiaries->size();
+		int **deslocationCost = new int*[F];
+		for(int i=0; i<F; i++) {
+			deslocationCost[i] = new int[graph->getNumberOfNodes()];
 		}
-		
-		
 		
 		connectSource(graph);
 		BellmanFord::run(graph, 0);
 		disconnectSource(graph);
-		std::cout << graph << std::endl;
+// 		std::cout << graph << std::endl;
 		
 		copyCostToH(graph);
 		for(int t = 1; t < graph->getNumberOfNodes(); t++){
 			graph->getNodeAt(t)->reweightEdges();
 		}
+
+// 		std::cout << "before dijkstra " << graph << std::endl;	
+
 		
-		std::cout << graph << std::endl;
-		
-// 		for(int u = 1; u < 2; u++) {
-		for(int u = 1; u < graph->getNumberOfNodes(); u++) {
-			Dijkstra::run(graph, u);
-			std::cout << graph << std::endl;
+		for(int u = 0; u < F; u++) {
+			Dijkstra::run(graph, subsidiaries->at(u));
+// 			std::cout << "after dijkstra " << graph << std::endl;
 
 			for(int v = 1; v < graph->getNumberOfNodes(); v++){
 				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(u));
