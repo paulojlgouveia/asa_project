@@ -4,7 +4,7 @@ target=src
 in=t03
 out=files/output/$(in).out
 
-files=src/Header.h src/Edge.h src/Node.h src/Edge.cpp src/Node.cpp src/Graph.h src/BHeap.h src/Dijkstra.h src/BellmanFord.h src/Johnson.h src/main.cpp
+files=src/Header.h src/Edge.h src/Node.h src/Edge.cpp src/Node.cpp src/Graph.h src/BHeap.h src/Solution.h src/Dijkstra.h src/BellmanFord.h src/Johnson.h src/main.cpp
 
 all: clean .o .exe clean
 

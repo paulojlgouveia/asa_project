@@ -424,6 +424,49 @@ public:
 
 
 
+/*************************** src/Solution.h ***************************/
+
+
+
+// structure representing the solution of the problem
+struct Solution {
+	int location;
+	int totalLoss;
+	int *deslocationCost;
+	int subsidiariesCount;
+	
+	Solution(int size): location(-1), totalLoss(99999), subsidiariesCount(size) {
+		deslocationCost = new int[size];
+		for(int i=0; i<size; i++)
+			deslocationCost[i] = 99999;
+	}
+	
+	~Solution() {
+		delete[] deslocationCost;
+	}
+	
+	
+	void print() {		
+		for(int t=0; t<subsidiariesCount; t++) 
+				if(deslocationCost[t] >= 99999)
+					totalLoss = 99999;
+		
+		
+		if(totalLoss < 99999) {
+			std::cout << location << " " << totalLoss << std::endl;
+			for(int t=0; t<subsidiariesCount; t++) 
+				std::cout << deslocationCost[t] << " ";
+		} else {
+			std::cout << "N";
+		}
+		
+		std::cout << std::endl;
+	}
+	
+};
+
+
+
 /*************************** src/Dijkstra.h ***************************/
 
 class Dijkstra {
@@ -581,6 +624,7 @@ public:
 
 /*************************** src/Johnson.h ***************************/
 
+
 class Johnson {
 	
 	static void connectSource(Graph *graph) {
@@ -589,13 +633,7 @@ class Johnson {
 	}
 	
 	static void disconnectSource(Graph *graph) {
-// 		std::list<Edge*>::iterator adjIterator;
-// 		std::list<Edge*>* adjList = (graph->getNodeAt(0))->getAdjacenciesList();
-//
-// 		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-// 			delete(*adjIterator);
-// 		}
-	
+
 		graph->getNodeAt(0)->clearAdjacencies();
 	}
 	
@@ -613,13 +651,46 @@ class Johnson {
 	
 public:
 
-	static int **run(Graph *graph, std::vector<int> *subsidiaries){
+// 	static int **run(Graph *graph, std::vector<int> *subsidiaries){
+// 		
+// 		int F = subsidiaries->size();
+// 		int **deslocationCost = new int*[F];
+// 		for(int i=0; i<F; i++) {
+// 			deslocationCost[i] = new int[graph->getNumberOfNodes()];
+// 		}
+// 		
+// 		connectSource(graph);
+// 		BellmanFord::run(graph, 0);
+// 		disconnectSource(graph);
+// // 		std::cout << graph << std::endl;
+// 		
+// 		copyCostToH(graph);
+// 		for(int t = 1; t < graph->getNumberOfNodes(); t++){
+// 			graph->getNodeAt(t)->reweightEdges();
+// 		}
+// 
+// // 		std::cout << "before dijkstra " << graph << std::endl;	
+// 
+// 		
+// 		for(int u = 0; u < F; u++) {
+// 			Dijkstra::run(graph, subsidiaries->at(u));
+// // 			std::cout << "after dijkstra " << graph << std::endl;
+// 
+// 			for(int v = 1; v < graph->getNumberOfNodes(); v++){
+// 				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(u));
+// 			}
+// 		}
+// 		
+// 		return deslocationCost;
+// 	}
+
+	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
 		
-		int F = subsidiaries->size();
-		int **deslocationCost = new int*[F];
-		for(int i=0; i<F; i++) {
-			deslocationCost[i] = new int[graph->getNumberOfNodes()];
-		}
+		int F = subsidiaries->size(), temp_loss = 0;
+		
+		int *aux, *temp = new int[F];
+		for(int i=0; i<F; i++)
+			temp[i] = 99999;
 		
 		connectSource(graph);
 		BellmanFord::run(graph, 0);
@@ -634,67 +705,36 @@ public:
 // 		std::cout << "before dijkstra " << graph << std::endl;	
 
 		
-		for(int u = 0; u < F; u++) {
-			Dijkstra::run(graph, subsidiaries->at(u));
-// 			std::cout << "after dijkstra " << graph << std::endl;
-
-			for(int v = 1; v < graph->getNumberOfNodes(); v++){
-				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(u));
+		for(int v = 1; v < graph->getNumberOfNodes(); v++){
+			
+			for(int u = 0; u < F; u++) {
+				Dijkstra::run(graph, subsidiaries->at(u));		// unnecessary runs of dijkstra
+// 				std::cout << "after dijkstra " << graph << std::endl;
+				
+				temp[u] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(u));
+			}
+			
+			temp_loss = 0;
+			for(int u = 0; u < F; u++)
+				temp_loss = temp_loss + temp[u];
+			
+			if(temp_loss < answer->totalLoss) {
+				answer->totalLoss = temp_loss;
+				answer->location = v;
+				
+				aux = temp;
+				temp = answer->deslocationCost;
+				answer->deslocationCost = aux;
 			}
 		}
-		
-		return deslocationCost;
-	}
 
-	
+		delete[] temp;
+	}
 };
 
 
 /*************************** src/main.cpp ***************************/
 
-
-void printSolution(int **deslocationCost, std::vector<int>* subsidiaries, int V) {
-	
-	int location = 0, total_loss = 0, loss = 99999, new_loss;
-	int v = 1;
-	unsigned int u = 0;
-	bool possible = true;
-	
-	for(v = 1; v < V; v++) {
-		new_loss = 0;
-		for(u = 0; u < subsidiaries->size(); u++) {
-			new_loss = new_loss + deslocationCost[u][v];
-		}
-		
-		if(new_loss < loss) {
-			subsidiaries->at(u-1) = deslocationCost[u-1][v];
-			location = v;
-			loss = new_loss;
-		}
-
-	}
-	
-	for(unsigned int t=0; t<subsidiaries->size(); t++) {
-		loss = deslocationCost[t][location];
-		
-		if(loss == 99999) {
-			possible = false;
-			break;
-		}
-		
-		total_loss += loss;
-	}
-	
-	if(possible) {
-		std::cout << location << " " << total_loss << std::endl;
-		for(unsigned int t=0; t<subsidiaries->size(); t++) 
-			std::cout << deslocationCost[t][location] << " ";
-	} else {
-		std::cout << "N";
-	}
-	
-	std::cout << std::endl;
-}
 
 int main () {
 	int V = 0, F=0, E = 0;
@@ -702,7 +742,7 @@ int main () {
 	Graph* graph;
 	std::vector<int>* subsidiaries = new std::vector<int>();
 	
-	int **deslocationCost;
+	Solution * solution;
 	
 	std::cin >> V;
 	std::cin >> F;
@@ -713,42 +753,16 @@ int main () {
 		std::cin >> temp;
 		subsidiaries->push_back(temp);
 	}
-
+	
+	solution = new Solution(F);
 	graph = new Graph(V, E);
-// 	std::cout << graph << std::endl;
-	
-// 	std::cout << "Dijkstra" << std::endl;
-// 	Dijkstra::run(graph, 1);
-// 	std::cout << graph << std::endl;
 
-// 	std::cout << "BellmanFord" << std::endl;
-// 	BellmanFord::run(graph, 1);
-// 	std::cout << graph << std::endl;
-
-// 	std::cout << "Johnson" << std::endl;
-	deslocationCost = Johnson::run(graph, subsidiaries);
-// 	std::cout << graph << std::endl;
-// 	
-// 	std::cout << "\t1 \t2 \t3 \t4 \t5 \t6" << std::endl;
-// 	std::cout << "  ----------------------------------------------------" << std::endl;
-// 	for(unsigned int u = 0; u < subsidiaries->size(); u++) {
-// 		std::cout << u << "| \t";
-// 		for(int v = 1; v < graph->getNumberOfNodes(); v++){
-// 			std::cout << deslocationCost[u][v] << " \t";
-// 		}
-// 		std::cout << std::endl;
-// 	}
-// 	std::cout << std::endl;
-	
-	printSolution(deslocationCost, subsidiaries, graph->getNumberOfNodes());
+	Johnson::run(graph, subsidiaries, solution);
+	solution->print();
 	
 	// free memory
-	for(int i=0; i<F; i++)
-		delete[] deslocationCost[i];
-	delete[] deslocationCost;
-	
 	delete(subsidiaries);
-
+	delete(solution);
 	delete(graph);
 	return 0;
 	
