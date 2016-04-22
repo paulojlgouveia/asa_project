@@ -13,7 +13,7 @@ all: clean .o .exe clean
 	g++ -ansi -pedantic -Wall -c $(target)/Node.cpp
 	g++ -ansi -pedantic -Wall -c $(target)/main.cpp
 
-.exe: 
+.exe:
 	g++ -o main Edge.o Node.o main.o
 	@rm -f *.o
 
@@ -23,7 +23,7 @@ clean:
 	@rm -f app
 
 release:
-	g++ -ansi -pedantic -Wall -c $(target)/al095_p2.cpp
+	g++ -ansi -pedantic -Wall -O3 -lm -c $(target)/al095_p2.cpp
 	g++ -o main al095_p2.o
 	@rm -f al095_p2.o
 
