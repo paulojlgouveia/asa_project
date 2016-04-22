@@ -65,18 +65,34 @@ class BMinHeap {
 		}
 	}
 	
-	void minHipify() {
-// 		Node *temp;
-// 		int leftChildIndex, rightChildIndex, minIndex;
-// 		
-// 		leftChildIndex = getLeftChildIndex(nodeIndex);
-// 		rightChildIndex = getRightChildIndex(nodeIndex);
-// 		
-// 		Node *temp;
-// 		int leftChildIndex, rightChildIndex, minIndex;
-// 		
-// 		
-// 		
+	void minHeapify(int nodeIndex) {
+		Node *temp;
+		int leftChildIndex, rightChildIndex, minIndex;
+		int leftChildWeight, rightChildWeight, minWeight;
+		
+		leftChildIndex = getLeftChildIndex(nodeIndex);
+		rightChildIndex = getRightChildIndex(nodeIndex);
+		
+		leftChildWeight = _data[leftChildIndex]->getPathCost();
+		rightChildWeight = _data[leftChildIndex]->getPathCost();
+		minWeight = _data[nodeIndex]->getPathCost();
+		
+		if(leftChildIndex <= _heapSize && leftChildWeight < minWeight)
+			minIndex = leftChildIndex;
+		else
+			minIndex = nodeIndex;
+		
+		minWeight = _data[minIndex]->getPathCost();
+		
+		if(rightChildIndex <= _heapSize && rightChildWeight < minWeight)
+			minIndex = rightChildIndex;
+		
+		if(minIndex != nodeIndex) {
+			temp = _data[minIndex];
+			_data[minIndex] = _data[nodeIndex];
+			_data[nodeIndex] = temp;
+			minHeapify(minIndex);
+		}
 	}
 	
 
@@ -113,9 +129,9 @@ public:
 			_data[0] = _data[_heapSize - 1];
 // 			_data[_heapSize-1] = NULL;
 			_heapSize--;
+			minHeapify(0);
 // 			if (_heapSize > 0)
 // 				fixDown(0);
-			minHeapify();
 		}
 	}
 	

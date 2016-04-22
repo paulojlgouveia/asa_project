@@ -39,6 +39,7 @@ public:
 // 				removed++;
 // 			else
 				_nodes->at(node1)->connect(_nodes->at(node2), weight);
+// 				_nodes->at(node2)->connect(_nodes->at(node1), weight);
 		}
 		
 // 		_edges -= removed;

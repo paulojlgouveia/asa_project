@@ -178,24 +178,32 @@ public:
 		
 		initializeSingleSource(graph, s);
 		
-		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-		for(int t=1; t<graph->getNumberOfNodes();t++)
-			Q->insert(graph->getNodeAt(t));
+// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
+// 		for(int t=1; t<graph->getNumberOfNodes();t++)
+// 			Q->insert(graph->getNodeAt(t));
 		
+		std::list<Node*> *Q = new std::list<Node*>();
+		for(int t=1; t<graph->getNumberOfNodes();t++)
+			Q->push_back(graph->getNodeAt(t));
+
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList;
 		
 		while(Q->size() > 0) {
-			std::cout  << std::endl << "Q: " << Q << std::endl;
+// 			std::cout  << std::endl << "Q: " << Q << std::endl;
 			
-			node1 = Q->getMinimum();
-			Q->removeMinimum();
+// 			node1 = Q->getMinimum();
+// 			Q->removeMinimum();
+			
+			Q->sort(compare_nocase);			// Nlog(N)
+			node1 = Q->front();
+			Q->pop_front();
 			
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
-				
+
 				relax(node1, node2, weight);
 			}
 		}
