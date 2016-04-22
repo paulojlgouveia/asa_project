@@ -4,6 +4,7 @@
 #include <iostream>
 #include <climits>
 #include <stack>
+#include <queue>
 #include <list>
 #include "Graph.h"
 #include "Node.h"
@@ -166,11 +167,62 @@ public:
 // 	}
 
 
+// 	static bool compare_nocase (const Node* first, const Node* second) {
+// 		return ( first->getPathCost() < second->getPathCost() );
+// 	}
+// 
+// 	static void run(Graph* graph, Node* s) {
+// 		Node *node1, *node2;
+// 		int weight;
+// 		
+// 		initializeSingleSource(graph, s);
+// 		
+// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
+// 		for(int t=1; t<graph->getNumberOfNodes();t++)
+// 			Q->insert(graph->getNodeAt(t));
+// 		
+// // 		std::list<Node*> *Q = new std::list<Node*>();
+// // 		for(int t=1; t<graph->getNumberOfNodes();t++)
+// // 			Q->push_back(graph->getNodeAt(t));
+// 
+// 		std::list<Edge*>::iterator adjIterator;
+// 		std::list<Edge*>* adjList;
+// 		
+// 		while(Q->size() > 0) {
+// // 			std::cout  << std::endl << "Q: " << Q << std::endl;
+// 			
+// 			std::cout  << std::endl << "Q: " << Q;
+// // 			node1 = Q->getMinimum();
+// // 			Q->removeMinimum();
+// 			node1 = Q->extractMin();
+// 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
+// 			
+// // 			Q->sort(compare_nocase);			// Nlog(N)
+// // 			node1 = Q->front();
+// // 			Q->pop_front();
+// 			
+// 			adjList = node1->getAdjacenciesList();
+// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+// 				node2 = (*adjIterator)->getNext();
+// 				weight = (*adjIterator)->getWeight();
+// 
+// 				relax(node1, node2, weight);
+// 			}
+// 		}
+// 		
+// 		delete(Q);
+// 	}
+	
+	
+	
+	
+	
+	
+	
+	
 	static bool compare_nocase (const Node* first, const Node* second) {
 		return ( first->getPathCost() < second->getPathCost() );
 	}
-
-	
 
 	static void run(Graph* graph, Node* s) {
 		Node *node1, *node2;
@@ -178,26 +230,20 @@ public:
 		
 		initializeSingleSource(graph, s);
 		
-// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-// 		for(int t=1; t<graph->getNumberOfNodes();t++)
-// 			Q->insert(graph->getNodeAt(t));
 		
-		std::list<Node*> *Q = new std::list<Node*>();
-		for(int t=1; t<graph->getNumberOfNodes();t++)
-			Q->push_back(graph->getNodeAt(t));
+		Node *nodes = new Node*[graph->getNumberOfNodes()];
+		typedef std::priority_queue<Node*, nodes, compare_nocase> MinHeap
+		
+		MinHeap *Q = new MinHeap()
 
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList;
 		
-		while(Q->size() > 0) {
-// 			std::cout  << std::endl << "Q: " << Q << std::endl;
-			
-// 			node1 = Q->getMinimum();
-// 			Q->removeMinimum();
-			
-			Q->sort(compare_nocase);			// Nlog(N)
-			node1 = Q->front();
-			Q->pop_front();
+		while(Q->size() > 0) {			
+// 			std::cout  << std::endl << "Q: " << Q;
+			node1 = Q->top();
+			Q->pop();
+// 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
 			
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
@@ -208,10 +254,9 @@ public:
 			}
 		}
 		
+		delete[] nodes;
 		delete(Q);
 	}
-	
-	
 	
 };
 //MERGE_END

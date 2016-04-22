@@ -117,8 +117,9 @@ public:
 		if (isEmpty()) {
 			std::cout  << std::endl << "Heap is empty" << std::endl;
 			throw std::string("Heap is empty");
-		} else
+		} else {
 			return _data[0];
+		}
 	}
 
 	void removeMinimum() {
@@ -129,11 +130,21 @@ public:
 			_data[0] = _data[_heapSize - 1];
 // 			_data[_heapSize-1] = NULL;
 			_heapSize--;
-			minHeapify(0);
-// 			if (_heapSize > 0)
-// 				fixDown(0);
+			if (_heapSize > 0)
+				fixDown(0);
 		}
 	}
+	
+	
+	Node* extractMin() {
+		minHeapify(0);
+		Node *min = _data[0];
+		_data[0] = _data[_heapSize -1];
+		_heapSize--;
+		return min;
+	}
+	
+
 	
 	void insert(Node* node) {
 		if (_heapSize == _arraySize) {
@@ -170,6 +181,134 @@ public:
  	}
 
 };
+
+// class BMaxHeap {
+// 	Node **_data;
+// 	int _heapSize;
+// 	int _arraySize;
+// 
+// 	int getLeftChildIndex(int nodeIndex) {
+// 		return 2 * nodeIndex + 1;
+// 	}
+// 
+// 	int getRightChildIndex(int nodeIndex) {
+// 		return 2 * nodeIndex + 2;
+// 	}
+// 
+// 	int getParentIndex(int nodeIndex) {
+// 		return (nodeIndex - 1) / 2;
+// 	}
+// 	
+// 	
+// 	void maxHeapify(int nodeIndex) {
+// 		Node *temp;
+// 		int leftChildIndex, rightChildIndex, maxIndex;
+// 		int leftChildWeight, rightChildWeight, maxWeight;
+// 		
+// 		leftChildIndex = getLeftChildIndex(nodeIndex);
+// 		rightChildIndex = getRightChildIndex(nodeIndex);
+// 		
+// 		leftChildWeight = _data[leftChildIndex]->getPathCost();
+// 		rightChildWeight = _data[leftChildIndex]->getPathCost();
+// 		maxWeight = _data[nodeIndex]->getPathCost();
+// 		
+// 		if(leftChildIndex <= _heapSize && leftChildWeight < maxWeight)
+// 			maxIndex = leftChildIndex;
+// 		else
+// 			maxIndex = nodeIndex;
+// 		
+// 		maxWeight = _data[maxIndex]->getPathCost();
+// 		
+// 		if(rightChildIndex <= _heapSize && rightChildWeight < maxWeight)
+// 			maxIndex = rightChildIndex;
+// 		
+// 		if(maxIndex != nodeIndex) {
+// 			temp = _data[maxIndex];
+// 			_data[maxIndex] = _data[nodeIndex];
+// 			_data[nodeIndex] = temp;
+// 			minHeapify(maxIndex);
+// 		}
+// 	}
+// 	
+// 
+// 
+// public:
+// 	BMaxHeap(int size) {
+// 		_data = new Node*[size];
+// 		_heapSize = 0;
+// 		_arraySize = size;
+// 	}
+// 	
+// 	~BMaxHeap() {
+// 		delete[] _data;
+// 	}
+// 	
+// 	bool isEmpty() { return (_heapSize == 0); }
+// 	int size() const { return _heapSize; }
+// 	int capacity() const { return _arraySize; }
+// 	Node* at(int index) const { return _data[index]; }
+// 	
+// 	Node* getMinimum() {
+// 		if (isEmpty()) {
+// 			std::cout  << std::endl << "Heap is empty" << std::endl;
+// 			throw std::string("Heap is empty");
+// 		} else {
+// 			minHeapify(0);
+// 			return _data[0];
+// 		}
+// 	}
+// 
+// 	void removeMinimum() {
+// 		if(isEmpty()) {
+// 			std::cout  << std::endl << "Heap is empty" << std::endl;
+// 			throw std::string("Heap is empty");
+// 		} else {
+// 			_data[0] = _data[_heapSize - 1];
+// 			_data[_heapSize-1] = NULL;
+// 			_heapSize--;
+// 			minHeapify(0);
+// 			if (_heapSize > 0)
+// 				fixDown(0);
+// 		}
+// 	}
+// 	
+// 	void insert(Node* node) {
+// 		if (_heapSize == _arraySize) {
+// 			std::cout  << std::endl << "Heap's underlying storage is overflow" << std::endl;
+// 			throw std::string("Heap's underlying storage is overflow");
+// 		} else {
+// 			_heapSize++;
+// 			_data[_heapSize - 1] = node;
+// 			fixUp(_heapSize - 1);
+// 		}
+// 	}
+// 	
+// 	
+// 	friend std::ostream &operator<<(std::ostream &out, const BMaxHeap *heap) {
+// 		out << std::endl;
+// 		out << "heap size: " << heap->size() << std::endl;
+// 		out << "max heap size: " << heap->capacity() << std::endl;
+// 		
+//   		for(int t=0; t<heap->size(); t++)
+//  			out << heap->at(t)->getPathCost() << " ";
+//  		
+//  		return out;
+//  	}
+// 	
+// 	friend std::ostream &operator<<(std::ostream &out, const BMaxHeap &heap) {
+// 		out << std::endl;
+// 		out << "heap size: " << heap.size() << std::endl;
+// 		out << "max heap size: " << heap.capacity() << std::endl;
+// 		
+//   		for(int t=0; t<heap.size(); t++)
+// 			out << heap.at(t)->getPathCost() << " ";
+//  		
+//  		return out;
+//  	}
+// };
+
+
+
 
 //MERGE_END
 
