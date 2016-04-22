@@ -24,15 +24,15 @@ struct Solution {
 	}
 	
 	
-	void print() {		
-		for(int t=0; t<subsidiariesCount; t++) 
+	void print() {
+		for(int t=0; t<subsidiariesCount; t++)
 				if(deslocationCost[t] >= 99999)
 					totalLoss = 99999;
 		
 		
 		if(totalLoss < 99999) {
 			std::cout << location << " " << totalLoss << std::endl;
-			for(int t=0; t<subsidiariesCount; t++) 
+			for(int t=0; t<subsidiariesCount; t++)
 				std::cout << deslocationCost[t] << " ";
 		} else {
 			std::cout << "N";
