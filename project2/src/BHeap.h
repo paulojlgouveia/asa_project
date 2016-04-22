@@ -23,7 +23,7 @@ class BMinHeap {
 		return (nodeIndex - 1) / 2;
 	}
 	
-	void shiftUp(int nodeIndex) {
+	void fixUp(int nodeIndex) {
 		Node *temp;
 		int parentIndex;
 		
@@ -33,12 +33,12 @@ class BMinHeap {
 				temp = _data[parentIndex];
 				_data[parentIndex] = _data[nodeIndex];
 				_data[nodeIndex] = temp;
-				shiftUp(parentIndex);
+				fixUp(parentIndex);
 			}
 		}
 	}
 	
-	void shiftDown(int nodeIndex) {
+	void fixDown(int nodeIndex) {
 		Node *temp;
 		int leftChildIndex, rightChildIndex, minIndex;
 		
@@ -61,9 +61,25 @@ class BMinHeap {
 			temp = _data[minIndex];
 			_data[minIndex] = _data[nodeIndex];
 			_data[nodeIndex] = temp;
-			shiftDown(minIndex);
+			fixDown(minIndex);
 		}
 	}
+	
+	void minHipify() {
+// 		Node *temp;
+// 		int leftChildIndex, rightChildIndex, minIndex;
+// 		
+// 		leftChildIndex = getLeftChildIndex(nodeIndex);
+// 		rightChildIndex = getRightChildIndex(nodeIndex);
+// 		
+// 		Node *temp;
+// 		int leftChildIndex, rightChildIndex, minIndex;
+// 		
+// 		
+// 		
+	}
+	
+
 
 public:
 	BMinHeap(int size) {
@@ -82,30 +98,35 @@ public:
 	Node* at(int index) const { return _data[index]; }
 	
 	Node* getMinimum() {
-		if (isEmpty())
+		if (isEmpty()) {
+			std::cout  << std::endl << "Heap is empty" << std::endl;
 			throw std::string("Heap is empty");
-		else
+		} else
 			return _data[0];
 	}
 
 	void removeMinimum() {
 		if(isEmpty()) {
+			std::cout  << std::endl << "Heap is empty" << std::endl;
 			throw std::string("Heap is empty");
 		} else {
 			_data[0] = _data[_heapSize - 1];
+// 			_data[_heapSize-1] = NULL;
 			_heapSize--;
-			if (_heapSize > 0)
-				shiftDown(0);
+// 			if (_heapSize > 0)
+// 				fixDown(0);
+			minHeapify();
 		}
 	}
 	
 	void insert(Node* node) {
 		if (_heapSize == _arraySize) {
+			std::cout  << std::endl << "Heap's underlying storage is overflow" << std::endl;
 			throw std::string("Heap's underlying storage is overflow");
 		} else {
 			_heapSize++;
 			_data[_heapSize - 1] = node;
-			shiftUp(_heapSize - 1);
+			fixUp(_heapSize - 1);
 		}
 	}
 	
@@ -116,7 +137,7 @@ public:
 		out << "max heap size: " << heap->capacity() << std::endl;
 		
   		for(int t=0; t<heap->size(); t++)
- 			out << heap->at(t) << " ";
+ 			out << heap->at(t)->getPathCost() << " ";
  		
  		return out;
  	}
@@ -127,7 +148,7 @@ public:
 		out << "max heap size: " << heap.capacity() << std::endl;
 		
   		for(int t=0; t<heap.size(); t++)
-			out << heap.at(t) << " ";
+			out << heap.at(t)->getPathCost() << " ";
  		
  		return out;
  	}

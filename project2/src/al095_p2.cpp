@@ -183,7 +183,7 @@ void Node::reweightEdges() {
 }
 
 int Node::getReweightPathCost(Node *source) {
-	if(getPathCost() != 99999)
+	if(getPathCost() < 99999)
 		return getPathCost() - source->getH() + getH();
 	return getPathCost();
 }
@@ -223,7 +223,7 @@ public:
 // constructors
 	Graph(int V, int E) : _vertices(V+1), _edges(E) {
 		int node1=0, node2=0, weight=0;
-		
+// 		int removed = 0;
 		_nodes = new std::vector<Node*>();
 // 		_nodes->reserve(_vertices);
 		
@@ -234,12 +234,18 @@ public:
 		for(int t = 0; t < _edges; t++) {
 			std::cin >> node1;
 			std::cin >> node2;
-			std::cin >> weight,
+			std::cin >> weight;
 			
 			//connect nodes (index = id - 1)
 // 			(*_nodes)[node1-1]->connect((*_nodes)[node2 - 1], weight);
-			_nodes->at(node1)->connect(_nodes->at(node2), weight);
+			
+// 			if(node1 == node2)
+// 				removed++;
+// 			else
+				_nodes->at(node1)->connect(_nodes->at(node2), weight);
 		}
+		
+// 		_edges -= removed;
 	}
 
 	
@@ -279,10 +285,18 @@ public:
 	friend std::ostream &operator<<(std::ostream &out, const Graph *graph) {
 		
   		out << std::endl;
-  		for(int t=0; t<graph->getNumberOfNodes(); t++) {
- 			out << graph->getNodeAt(t) << std::endl;
- 		}
- 		
+		for(int t=0; t<graph->getNumberOfNodes(); t++) {
+			out << graph->getNodeAt(t) << std::endl;
+		}
+
+// 		out << graph->getNodeAt(33) << std::endl;
+// 		out << graph->getNodeAt(10) << std::endl;
+// 		out << graph->getNodeAt(42) << std::endl;
+// 		out << graph->getNodeAt(53) << std::endl;
+// 		out << graph->getNodeAt(51) << std::endl;
+// 		out << graph->getNodeAt(26) << std::endl;
+
+		
  		return out;
  	}
 	
@@ -311,7 +325,7 @@ class BMinHeap {
 		return (nodeIndex - 1) / 2;
 	}
 	
-	void shiftUp(int nodeIndex) {
+	void fixUp(int nodeIndex) {
 		Node *temp;
 		int parentIndex;
 		
@@ -321,12 +335,12 @@ class BMinHeap {
 				temp = _data[parentIndex];
 				_data[parentIndex] = _data[nodeIndex];
 				_data[nodeIndex] = temp;
-				shiftUp(parentIndex);
+				fixUp(parentIndex);
 			}
 		}
 	}
 	
-	void shiftDown(int nodeIndex) {
+	void fixDown(int nodeIndex) {
 		Node *temp;
 		int leftChildIndex, rightChildIndex, minIndex;
 		
@@ -349,7 +363,7 @@ class BMinHeap {
 			temp = _data[minIndex];
 			_data[minIndex] = _data[nodeIndex];
 			_data[nodeIndex] = temp;
-			shiftDown(minIndex);
+			fixDown(minIndex);
 		}
 	}
 
@@ -370,30 +384,34 @@ public:
 	Node* at(int index) const { return _data[index]; }
 	
 	Node* getMinimum() {
-		if (isEmpty())
+		if (isEmpty()) {
+			std::cout  << std::endl << "Heap is empty" << std::endl;
 			throw std::string("Heap is empty");
-		else
+		} else
 			return _data[0];
 	}
 
 	void removeMinimum() {
 		if(isEmpty()) {
+			std::cout  << std::endl << "Heap is empty" << std::endl;
 			throw std::string("Heap is empty");
 		} else {
 			_data[0] = _data[_heapSize - 1];
+// 			_data[_heapSize-1] = NULL;
 			_heapSize--;
 			if (_heapSize > 0)
-				shiftDown(0);
+				fixDown(0);
 		}
 	}
 	
 	void insert(Node* node) {
 		if (_heapSize == _arraySize) {
+			std::cout  << std::endl << "Heap's underlying storage is overflow" << std::endl;
 			throw std::string("Heap's underlying storage is overflow");
 		} else {
 			_heapSize++;
 			_data[_heapSize - 1] = node;
-			shiftUp(_heapSize - 1);
+			fixUp(_heapSize - 1);
 		}
 	}
 	
@@ -404,7 +422,7 @@ public:
 		out << "max heap size: " << heap->capacity() << std::endl;
 		
   		for(int t=0; t<heap->size(); t++)
- 			out << heap->at(t) << " ";
+ 			out << heap->at(t)->getPathCost() << " ";
  		
  		return out;
  	}
@@ -415,7 +433,7 @@ public:
 		out << "max heap size: " << heap.capacity() << std::endl;
 		
   		for(int t=0; t<heap.size(); t++)
-			out << heap.at(t) << " ";
+			out << heap.at(t)->getPathCost() << " ";
  		
  		return out;
  	}
@@ -446,15 +464,15 @@ struct Solution {
 	}
 	
 	
-	void print() {		
-		for(int t=0; t<subsidiariesCount; t++) 
+	void print() {
+		for(int t=0; t<subsidiariesCount; t++)
 				if(deslocationCost[t] >= 99999)
 					totalLoss = 99999;
 		
 		
 		if(totalLoss < 99999) {
 			std::cout << location << " " << totalLoss << std::endl;
-			for(int t=0; t<subsidiariesCount; t++) 
+			for(int t=0; t<subsidiariesCount; t++)
 				std::cout << deslocationCost[t] << " ";
 		} else {
 			std::cout << "N";
@@ -501,8 +519,8 @@ public:
 		if(v->getPathCost() > (u->getPathCost() + weight)) {
 			v->setPathCost(u->getPathCost() + weight);
 			v->setParent(u);
-			v->setVisited(true);
 		}
+			v->setVisited(true);
 	}
 
 
@@ -521,51 +539,154 @@ public:
 		run(graph, graph->getNodeAt(index));
 	}
 
-	static void run(Graph* graph, Node* s) {
-		
+// 	static void run(Graph* graph, Node* s) {
+// 		
 // 		std::cout << std::endl<< std::endl<< "s: " << s->getId() << std::endl;
+// 
+// 		Node *node1, *node2;
+// 		int weight;
+// 		
+// // 		std::list<Node*>* S = new std::list<Node*>();
+// 		
+// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
+// 		Q->insert(s);
+// 
+// 		std::list<Edge*>::iterator adjIterator;
+// 		std::list<Edge*>* adjList;
+// 		
+// 		initializeSingleSource(graph, s);
+// 
+// 		while(Q->size() > 0) {
+// 
+// // 			std::cout  << std::endl << "Q: " << Q;
+//  			node1 = Q->getMinimum();
+// 			Q->removeMinimum();
+// 			node1->setVisited(true);
+// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
+// 
+// 			
+// 			adjList = node1->getAdjacenciesList();
+// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+// 				node2 = (*adjIterator)->getNext();
+// 				weight = (*adjIterator)->getWeight();
+// 				
+// // 				std::cout << node2->getId() << "\t";
+// 
+// // 				if(node2->getParent() == NULL)
+// 				if(!node2->visited())
+// 					Q->insert(node2);
+// 				
+// 				relax(node1, node2, weight);
+// // 				usleep(5000);
+// 			}
+// 		}
+// 		
+// 		std::cout << graph << std::endl;
+// 		
+// // 		delete(S);
+// 		delete(Q);
+// 	}
+	
+	
+// 	static void run(Graph* graph, Node* s) {
+// 		
+// // 		std::cout << std::endl<< "s: " << s->getId() << std::endl;
+// 
+// 		Node *node1, *node2;
+// 		int weight;
+// 		
+// // 		std::list<Node*>* S = new std::list<Node*>();
+// 		
+// 		initializeSingleSource(graph, s);
+// 		
+// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
+// // 		Q->insert(s);
+// 		for(int t=1; t<graph->getNumberOfNodes();t++)
+// // 			if(graph->getNodeAt(t) != s)
+// 				Q->insert(graph->getNodeAt(t));
+// 		
+// 
+// 		std::list<Edge*>::iterator adjIterator;
+// 		std::list<Edge*>* adjList;
+// 		
+// 
+// 		while(Q->size() > 0) {
+// 
+// // 			std::cout  << std::endl << "Q: " << Q;
+//  			node1 = Q->getMinimum();
+// 			Q->removeMinimum();
+// // 			node1->setVisited(true);
+// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
+// 
+// 			
+// 			adjList = node1->getAdjacenciesList();
+// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+// 				node2 = (*adjIterator)->getNext();
+// 				weight = (*adjIterator)->getWeight();
+// 				
+// // 				std::cout << node2->getId() << "\t";
+// 
+// // 				if(node2->getParent() == NULL)
+// // 				if(!node2->visited())
+// // 					Q->insert(node2);
+// 				
+// 				relax(node1, node2, weight);
+// 			}
+// 		}
+// 		
+// // 		std::cout << graph << std::endl;
+// 		
+// // 		delete(S);
+// 		delete(Q);
+// 	}
 
+
+	static bool compare_nocase (const Node* first, const Node* second) {
+		return ( first->getPathCost() < second->getPathCost() );
+	}
+
+	
+
+	static void run(Graph* graph, Node* s) {
 		Node *node1, *node2;
 		int weight;
 		
-// 		std::list<Node*>* S = new std::list<Node*>();
+		initializeSingleSource(graph, s);
 		
-		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-		Q->insert(s);
+// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
+// 		for(int t=1; t<graph->getNumberOfNodes();t++)
+// 			Q->insert(graph->getNodeAt(t));
+		
+		std::list<Node*> *Q = new std::list<Node*>();
+		for(int t=1; t<graph->getNumberOfNodes();t++)
+			Q->push_back(graph->getNodeAt(t));
 
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList;
 		
-		initializeSingleSource(graph, s);
-
 		while(Q->size() > 0) {
-
-// 			std::cout << "Q: " << Q;
- 			node1 = Q->getMinimum();
-			Q->removeMinimum();
-			node1->setVisited(true);
-// 			std::cout << node1->getId() << std::endl;
-
+// 			std::cout  << std::endl << "Q: " << Q << std::endl;
+			
+// 			node1 = Q->getMinimum();
+// 			Q->removeMinimum();
+			
+			Q->sort(compare_nocase);			// Nlog(N)
+			node1 = Q->front();
+			Q->pop_front();
 			
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
-				
-// 				std::cout << node2->getId() << "\t";
 
-// 				if(node2->getParent() == NULL)
-				if(!node2->visited())
-					Q->insert(node2);
-				
 				relax(node1, node2, weight);
-// 				usleep(5000);
 			}
 		}
 		
-// 		delete(S);
 		delete(Q);
 	}
+	
+	
 	
 };
 
@@ -605,6 +726,7 @@ public:
 		
 			// loop through all edges
 			for (int i = 0; i < graph->getNumberOfNodes(); i++){
+				
 				u = graph->getNodeAt(i);
 				adjList = u->getAdjacenciesList();
 				
@@ -614,8 +736,24 @@ public:
 					relax(u, v, weight);
 				}
 			}
-			
 		}
+		
+		// look for negative loops
+		for (int t = 0; t < graph->getNumberOfNodes(); t++){
+			// loop through all edges
+			for (int i = 0; i < graph->getNumberOfNodes(); i++){
+				u = graph->getNodeAt(i);
+				adjList = u->getAdjacenciesList();
+				
+				for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+					v = (*adjIterator)->getNext();
+					weight = (*adjIterator)->getWeight();
+					if(v->getPathCost() > weight + u->getPathCost())
+						throw std::string("NEGATIVE LOOP !!!");
+				}
+			}
+		}
+		
 		
 		// doesn't check for negative loops since there's no need
 	}
@@ -651,13 +789,66 @@ class Johnson {
 	
 public:
 
-// 	static int **run(Graph *graph, std::vector<int> *subsidiaries){
+	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
+
+		int F = subsidiaries->size();
+		int tempCost;
+		
+		int **deslocationCost = new int*[F];
+		int *aux = new int[F];
+		
+		for(int i=0; i<F; i++) {
+			deslocationCost[i] = new int[graph->getNumberOfNodes()];
+		}
+
+		connectSource(graph);
+		BellmanFord::run(graph, 0);
+		disconnectSource(graph);
+// 		std::cout << graph << std::endl;
+
+		copyCostToH(graph);
+		for(int t = 1; t < graph->getNumberOfNodes(); t++){
+			graph->getNodeAt(t)->reweightEdges();
+		}
+
+		// std::cout << "before dijkstra " << graph << std::endl;
+
+
+		for(int u = 0; u < F; u++) {
+			Dijkstra::run(graph, subsidiaries->at(u));
+// 			std::cout << "after dijkstra " << graph << std::endl;
+
+			for(int v = 1; v < graph->getNumberOfNodes(); v++){
+				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
+			}
+		}
+		
+		for(int v = 1; v < graph->getNumberOfNodes(); v++){
+			tempCost = 0;
+			
+			for(int u = 0; u < F; u++) {
+				tempCost += deslocationCost[u][v];
+			}
+			
+			if(tempCost < answer->totalLoss) {
+				answer->totalLoss = tempCost;
+				answer->location = v;
+				
+				for(int u = 0; u < F; u++)
+					aux[u] = deslocationCost[u][v];
+				
+				answer->deslocationCost = aux;
+			}
+		}
+	}
+
+// 	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
 // 		
-// 		int F = subsidiaries->size();
-// 		int **deslocationCost = new int*[F];
-// 		for(int i=0; i<F; i++) {
-// 			deslocationCost[i] = new int[graph->getNumberOfNodes()];
-// 		}
+// 		int F = subsidiaries->size(), temp_loss = 0;
+// 		
+// 		int *aux, *temp = new int[F];
+// 		for(int i=0; i<F; i++)
+// 			temp[i] = 99999;
 // 		
 // 		connectSource(graph);
 // 		BellmanFord::run(graph, 0);
@@ -669,68 +860,40 @@ public:
 // 			graph->getNodeAt(t)->reweightEdges();
 // 		}
 // 
-// // 		std::cout << "before dijkstra " << graph << std::endl;	
+// // 		std::cout << "before dijkstra " << graph << std::endl;
 // 
-// 		
-// 		for(int u = 0; u < F; u++) {
-// 			Dijkstra::run(graph, subsidiaries->at(u));
-// // 			std::cout << "after dijkstra " << graph << std::endl;
-// 
-// 			for(int v = 1; v < graph->getNumberOfNodes(); v++){
-// 				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(u));
+// 		for(int v = 1; v < graph->getNumberOfNodes(); v++){
+// 			
+// 			for(int u = 0; u < F; u++) {
+// 				Dijkstra::run(graph, subsidiaries->at(u));		// unnecessary runs of dijkstra
+// // 				std::cout << "after dijkstra " << graph << std::endl;
+// 				
+// 				temp[u] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
+// 			}
+// 			
+// 			temp_loss = 0;
+// 			for(int u = 0; u < F; u++)
+// 				temp_loss = temp_loss + temp[u];
+// 			
+// 			std::cout << v << ": " << temp_loss << std::endl;
+// 			
+// 			if(temp_loss < answer->totalLoss) {
+// 				answer->totalLoss = temp_loss;
+// 				answer->location = v;
+// 				
+// 				aux = temp;
+// 				temp = answer->deslocationCost;
+// 				answer->deslocationCost = aux;
 // 			}
 // 		}
 // 		
-// 		return deslocationCost;
+// 		std::cout << std::endl;
+// 
+// 		delete[] temp;
 // 	}
 
-	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
-		
-		int F = subsidiaries->size(), temp_loss = 0;
-		
-		int *aux, *temp = new int[F];
-		for(int i=0; i<F; i++)
-			temp[i] = 99999;
-		
-		connectSource(graph);
-		BellmanFord::run(graph, 0);
-		disconnectSource(graph);
-// 		std::cout << graph << std::endl;
-		
-		copyCostToH(graph);
-		for(int t = 1; t < graph->getNumberOfNodes(); t++){
-			graph->getNodeAt(t)->reweightEdges();
-		}
-
-// 		std::cout << "before dijkstra " << graph << std::endl;	
-
-		
-		for(int v = 1; v < graph->getNumberOfNodes(); v++){
-			
-			for(int u = 0; u < F; u++) {
-				Dijkstra::run(graph, subsidiaries->at(u));		// unnecessary runs of dijkstra
-// 				std::cout << "after dijkstra " << graph << std::endl;
-				
-				temp[u] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(u));
-			}
-			
-			temp_loss = 0;
-			for(int u = 0; u < F; u++)
-				temp_loss = temp_loss + temp[u];
-			
-			if(temp_loss < answer->totalLoss) {
-				answer->totalLoss = temp_loss;
-				answer->location = v;
-				
-				aux = temp;
-				temp = answer->deslocationCost;
-				answer->deslocationCost = aux;
-			}
-		}
-
-		delete[] temp;
-	}
 };
+
 
 
 /*************************** src/main.cpp ***************************/
@@ -757,6 +920,8 @@ int main () {
 	solution = new Solution(F);
 	graph = new Graph(V, E);
 
+// 	std::cout << graph << std::endl;
+	
 	Johnson::run(graph, subsidiaries, solution);
 	solution->print();
 	

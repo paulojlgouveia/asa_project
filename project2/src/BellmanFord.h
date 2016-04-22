@@ -39,6 +39,7 @@ public:
 		
 			// loop through all edges
 			for (int i = 0; i < graph->getNumberOfNodes(); i++){
+				
 				u = graph->getNodeAt(i);
 				adjList = u->getAdjacenciesList();
 				
@@ -48,8 +49,24 @@ public:
 					relax(u, v, weight);
 				}
 			}
-			
 		}
+		
+		// look for negative loops
+		for (int t = 0; t < graph->getNumberOfNodes(); t++){
+			// loop through all edges
+			for (int i = 0; i < graph->getNumberOfNodes(); i++){
+				u = graph->getNodeAt(i);
+				adjList = u->getAdjacenciesList();
+				
+				for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+					v = (*adjIterator)->getNext();
+					weight = (*adjIterator)->getWeight();
+					if(v->getPathCost() > weight + u->getPathCost())
+						throw std::string("NEGATIVE LOOP !!!");
+				}
+			}
+		}
+		
 		
 		// doesn't check for negative loops since there's no need
 	}

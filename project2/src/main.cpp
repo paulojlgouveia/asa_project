@@ -29,6 +29,8 @@ int main () {
 	solution = new Solution(F);
 	graph = new Graph(V, E);
 
+// 	std::cout << graph << std::endl;
+	
 	Johnson::run(graph, subsidiaries, solution);
 	solution->print();
 	

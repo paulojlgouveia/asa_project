@@ -19,7 +19,7 @@ public:
 // constructors
 	Graph(int V, int E) : _vertices(V+1), _edges(E) {
 		int node1=0, node2=0, weight=0;
-		int removed = 0;
+// 		int removed = 0;
 		_nodes = new std::vector<Node*>();
 // 		_nodes->reserve(_vertices);
 		
@@ -35,13 +35,13 @@ public:
 			//connect nodes (index = id - 1)
 // 			(*_nodes)[node1-1]->connect((*_nodes)[node2 - 1], weight);
 			
-			if(node1 == node2)
-				removed++;
-			else			
+// 			if(node1 == node2)
+// 				removed++;
+// 			else
 				_nodes->at(node1)->connect(_nodes->at(node2), weight);
 		}
 		
-		_edges -= removed;
+// 		_edges -= removed;
 	}
 
 	
@@ -81,10 +81,10 @@ public:
 	friend std::ostream &operator<<(std::ostream &out, const Graph *graph) {
 		
   		out << std::endl;
-  		for(int t=0; t<graph->getNumberOfNodes(); t++) {
- 			out << graph->getNodeAt(t) << std::endl;
- 		}
- 		
+		for(int t=0; t<graph->getNumberOfNodes(); t++) {
+			out << graph->getNodeAt(t) << std::endl;
+		}
+		
  		return out;
  	}
 	
