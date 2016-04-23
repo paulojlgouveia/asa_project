@@ -23,13 +23,15 @@ public:
 
 // constructors
 	Node() : _adjSize(0), _pathCost(99999), _heapIndex(-1) {
-		_adjList = new std::list<Edge*>();
+		std::cout << "NODE CREATED" << std::endl;
+		//_adjList = new std::list<Edge*>();
 	}
 
 // destructors
 	virtual ~Node() {
-	deleteAdjacencies();
-}
+	//deleteAdjacencies();
+	std::cout << "node deleted" << std::endl;
+	}
 	
 	void clearAdjacencies();
 	void deleteAdjacencies();
@@ -53,8 +55,6 @@ public:
 	void connect(Node* adjacent, int weight);
 	void reweightEdges();
 	int getReweightPathCost(Node *source);
-
-
 };
 
 //MERGE_END
