@@ -23,14 +23,12 @@ public:
 
 // constructors
 	Node() : _adjSize(0), _pathCost(99999), _heapIndex(-1) {
-// 		std::cout << "NODE CREATED" << std::endl;
 		_adjList = new std::list<Edge*>();
 	}
 
 // destructors
 	virtual ~Node() {
-	deleteAdjacencies();
-// 	std::cout << "node deleted" << std::endl;
+		deleteAdjacencies();
 	}
 	
 	void clearAdjacencies();

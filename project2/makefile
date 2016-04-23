@@ -34,6 +34,9 @@ run:
 		cat files/expected/$$FILE.out ; \
 		echo; \
 	done
+
+valgrind:
+	valgrind --leak-check=full ./main < files/input/$(in).in
 	
 memcheck:
 	@rm -f massif.out.*

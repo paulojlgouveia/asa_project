@@ -12,6 +12,7 @@
 class Graph {
 	int _vertices;					// number of vertices
  	std::vector<Node*> *_nodes;		// list of nodes
+	std::vector<Node*> *_Edges;		// list of edges
 	
 public:
 	

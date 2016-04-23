@@ -4,12 +4,7 @@
 #include "Edge.h"
 
 //MERGE_START
-// constructors
-Edge::Edge(Node* next, int weight) : _next(next), _weight(weight) { }
 
-// destructors
-Edge::~Edge() { }
-	
 	
 // getters
 Node* Edge::getNext() const { return _next; }

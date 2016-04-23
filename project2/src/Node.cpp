@@ -46,7 +46,8 @@ void Node::reweightEdges() {
 int Node::getReweightPathCost(Node *source) {
 	if(getPathCost() < 99999)
 		return getPathCost() - source->getH() + getH();
-	return getPathCost();
+// 	return getPathCost();
+	return 99999;
 }
 
 

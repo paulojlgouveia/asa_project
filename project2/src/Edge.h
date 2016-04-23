@@ -13,14 +13,15 @@ class Edge {
 	
 	Node* _next;
 	int _weight;
+	Edge* _right;
 
 
 public:
 // constructors
-	Edge(Node* next, int weight);
+	Edge(Node* next, int weight) : _next(next), _weight(weight), _right(NULL) { }
 	
 // destructors
-	virtual ~Edge();
+	virtual ~Edge() { }
 	
 // getters
 	Node* getNext() const ;
