@@ -1,7 +1,7 @@
 target=src
 #target=submission/
 
-in=t03
+in=t06
 out=files/output/$(in).out
 
 files=src/Header.h src/Edge.h src/Node.h src/Edge.cpp src/Node.cpp src/Graph.h src/BHeap.h src/Solution.h src/Dijkstra.h src/BellmanFord.h src/Johnson.h src/main.cpp
@@ -9,9 +9,9 @@ files=src/Header.h src/Edge.h src/Node.h src/Edge.cpp src/Node.cpp src/Graph.h s
 all: clean .o .exe clean
 
 .o:
-	g++ -ansi -pedantic -Wall -c $(target)/Edge.cpp
-	g++ -ansi -pedantic -Wall -c $(target)/Node.cpp
-	g++ -ansi -pedantic -Wall -c $(target)/main.cpp
+	g++ -ansi -pedantic -Wall -O3 -lm -c $(target)/Edge.cpp
+	g++ -ansi -pedantic -Wall -O3 -lm -c $(target)/Node.cpp
+	g++ -ansi -pedantic -Wall -O3 -lm -c $(target)/main.cpp
 
 .exe:
 	g++ -o main Edge.o Node.o main.o
@@ -32,6 +32,7 @@ run:
 	
 memcheck:
 	valgrind --leak-check=full ./main < files/input/$(in).in
+	valgrind --tool=massif ./main < files/input/$(in).in
 	cat $(out)
 	@echo
 
