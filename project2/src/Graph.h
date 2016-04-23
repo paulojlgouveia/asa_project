@@ -11,18 +11,18 @@
 
 class Graph {
 	int _vertices;					// number of vertices
- 	std::vector<Node*> *_nodes;		// list of nodes
-	std::vector<Node*> *_Edges;		// list of edges
+ 	std::vector<Node*> _nodes;		// list of nodes
+	std::vector<Node*> _Edges;		// list of edges
 	
 public:
 	
 // constructors
 	Graph(int V, int E) : _vertices(V+1) {
 		int node1=0, node2=0, weight=0;
-		_nodes = new std::vector<Node*>();
+		//_nodes = new std::vector<Node*>();
 		
 		for(int t = 0; t < _vertices; t++)
-			_nodes->push_back(new Node());
+			_nodes.push_back(new Node());
 		
 		//read edges from stdin
 		for(int t = 0; t < E; t++) {
@@ -31,23 +31,23 @@ public:
 			std::cin >> weight;
 			
 			//connect nodes (index = id - 1)
-			_nodes->at(node1)->connect(_nodes->at(node2), weight);
+			_nodes.at(node1)->connect(_nodes.at(node2), weight);
 		}
 	}
 
 // destructors
 	~Graph() {
 		for(int t = 0; t < _vertices; t++) {
-			delete(_nodes->at(t));
+			delete(_nodes.at(t));
 		}
 		
-		delete(_nodes);
+		//delete(_nodes);
 	}
 	
 // getters
 	int getNumberOfNodes() const { return _vertices; }
-	std::vector<Node*>* getNodesArray() const { return _nodes; }
-	Node* getNodeAt(int index) const { return _nodes->at(index); }
+	std::vector<Node*>* getNodesArray() { return &_nodes; }
+	Node* getNodeAt(int index) const { return _nodes.at(index); }
 
 
 

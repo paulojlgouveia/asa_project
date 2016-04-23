@@ -11,7 +11,7 @@
 //MERGE_START
 class Node {
 	int _adjSize; 					// size of adjacencies list (because of c++98)
-	std::list<Edge*>* _adjList;		// list of adjacent nodes
+	std::list<Edge*> _adjList;		// list of adjacent nodes
 	
 	int _pathCost;
 	int _h;
@@ -23,7 +23,7 @@ public:
 
 // constructors
 	Node() : _adjSize(0), _pathCost(99999), _heapIndex(-1) {
-		_adjList = new std::list<Edge*>();
+		//_adjList = new std::list<Edge*>();
 	}
 
 // destructors
@@ -39,7 +39,7 @@ public:
 	int getPathCost() const { return _pathCost; }
 	int getH() const { return _h; }
 
-	std::list<Edge*>* getAdjacenciesList() const { return _adjList; }
+	std::list<Edge*>* getAdjacenciesList() { return &_adjList; }
 	int getHeapIndex() const { return _heapIndex; }
 	
 // setters
