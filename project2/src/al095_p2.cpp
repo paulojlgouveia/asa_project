@@ -412,8 +412,9 @@ public:
 		if (isEmpty()) {
 			std::cout  << std::endl << "Heap is empty" << std::endl;
 			throw std::string("Heap is empty");
-		} else
+		} else {
 			return _data[0];
+		}
 	}
 
 	void removeMinimum() {
@@ -424,11 +425,21 @@ public:
 			_data[0] = _data[_heapSize - 1];
 // 			_data[_heapSize-1] = NULL;
 			_heapSize--;
-			minHeapify(0);
-// 			if (_heapSize > 0)
-// 				fixDown(0);
+			if (_heapSize > 0)
+				fixDown(0);
 		}
 	}
+	
+	
+	Node* extractMin() {
+		minHeapify(0);
+		Node *min = _data[0];
+		_data[0] = _data[_heapSize -1];
+		_heapSize--;
+		return min;
+	}
+	
+
 	
 	void insert(Node* node) {
 		if (_heapSize == _arraySize) {
@@ -465,6 +476,134 @@ public:
  	}
 
 };
+
+// class BMaxHeap {
+// 	Node **_data;
+// 	int _heapSize;
+// 	int _arraySize;
+// 
+// 	int getLeftChildIndex(int nodeIndex) {
+// 		return 2 * nodeIndex + 1;
+// 	}
+// 
+// 	int getRightChildIndex(int nodeIndex) {
+// 		return 2 * nodeIndex + 2;
+// 	}
+// 
+// 	int getParentIndex(int nodeIndex) {
+// 		return (nodeIndex - 1) / 2;
+// 	}
+// 	
+// 	
+// 	void maxHeapify(int nodeIndex) {
+// 		Node *temp;
+// 		int leftChildIndex, rightChildIndex, maxIndex;
+// 		int leftChildWeight, rightChildWeight, maxWeight;
+// 		
+// 		leftChildIndex = getLeftChildIndex(nodeIndex);
+// 		rightChildIndex = getRightChildIndex(nodeIndex);
+// 		
+// 		leftChildWeight = _data[leftChildIndex]->getPathCost();
+// 		rightChildWeight = _data[leftChildIndex]->getPathCost();
+// 		maxWeight = _data[nodeIndex]->getPathCost();
+// 		
+// 		if(leftChildIndex <= _heapSize && leftChildWeight < maxWeight)
+// 			maxIndex = leftChildIndex;
+// 		else
+// 			maxIndex = nodeIndex;
+// 		
+// 		maxWeight = _data[maxIndex]->getPathCost();
+// 		
+// 		if(rightChildIndex <= _heapSize && rightChildWeight < maxWeight)
+// 			maxIndex = rightChildIndex;
+// 		
+// 		if(maxIndex != nodeIndex) {
+// 			temp = _data[maxIndex];
+// 			_data[maxIndex] = _data[nodeIndex];
+// 			_data[nodeIndex] = temp;
+// 			minHeapify(maxIndex);
+// 		}
+// 	}
+// 	
+// 
+// 
+// public:
+// 	BMaxHeap(int size) {
+// 		_data = new Node*[size];
+// 		_heapSize = 0;
+// 		_arraySize = size;
+// 	}
+// 	
+// 	~BMaxHeap() {
+// 		delete[] _data;
+// 	}
+// 	
+// 	bool isEmpty() { return (_heapSize == 0); }
+// 	int size() const { return _heapSize; }
+// 	int capacity() const { return _arraySize; }
+// 	Node* at(int index) const { return _data[index]; }
+// 	
+// 	Node* getMinimum() {
+// 		if (isEmpty()) {
+// 			std::cout  << std::endl << "Heap is empty" << std::endl;
+// 			throw std::string("Heap is empty");
+// 		} else {
+// 			minHeapify(0);
+// 			return _data[0];
+// 		}
+// 	}
+// 
+// 	void removeMinimum() {
+// 		if(isEmpty()) {
+// 			std::cout  << std::endl << "Heap is empty" << std::endl;
+// 			throw std::string("Heap is empty");
+// 		} else {
+// 			_data[0] = _data[_heapSize - 1];
+// 			_data[_heapSize-1] = NULL;
+// 			_heapSize--;
+// 			minHeapify(0);
+// 			if (_heapSize > 0)
+// 				fixDown(0);
+// 		}
+// 	}
+// 	
+// 	void insert(Node* node) {
+// 		if (_heapSize == _arraySize) {
+// 			std::cout  << std::endl << "Heap's underlying storage is overflow" << std::endl;
+// 			throw std::string("Heap's underlying storage is overflow");
+// 		} else {
+// 			_heapSize++;
+// 			_data[_heapSize - 1] = node;
+// 			fixUp(_heapSize - 1);
+// 		}
+// 	}
+// 	
+// 	
+// 	friend std::ostream &operator<<(std::ostream &out, const BMaxHeap *heap) {
+// 		out << std::endl;
+// 		out << "heap size: " << heap->size() << std::endl;
+// 		out << "max heap size: " << heap->capacity() << std::endl;
+// 		
+//   		for(int t=0; t<heap->size(); t++)
+//  			out << heap->at(t)->getPathCost() << " ";
+//  		
+//  		return out;
+//  	}
+// 	
+// 	friend std::ostream &operator<<(std::ostream &out, const BMaxHeap &heap) {
+// 		out << std::endl;
+// 		out << "heap size: " << heap.size() << std::endl;
+// 		out << "max heap size: " << heap.capacity() << std::endl;
+// 		
+//   		for(int t=0; t<heap.size(); t++)
+// 			out << heap.at(t)->getPathCost() << " ";
+//  		
+//  		return out;
+//  	}
+// };
+
+
+
 
 
 
@@ -566,139 +705,217 @@ public:
 	}
 
 // 	static void run(Graph* graph, Node* s) {
-// 		
+//
 // 		std::cout << std::endl<< std::endl<< "s: " << s->getId() << std::endl;
-// 
+//
 // 		Node *node1, *node2;
 // 		int weight;
-// 		
+//
 // // 		std::list<Node*>* S = new std::list<Node*>();
-// 		
+//
 // 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
 // 		Q->insert(s);
-// 
+//
 // 		std::list<Edge*>::iterator adjIterator;
 // 		std::list<Edge*>* adjList;
-// 		
+//
 // 		initializeSingleSource(graph, s);
-// 
+//
 // 		while(Q->size() > 0) {
-// 
+//
 // // 			std::cout  << std::endl << "Q: " << Q;
 //  			node1 = Q->getMinimum();
 // 			Q->removeMinimum();
 // 			node1->setVisited(true);
 // // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-// 
-// 			
+//
+//
 // 			adjList = node1->getAdjacenciesList();
 // 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 // 				node2 = (*adjIterator)->getNext();
 // 				weight = (*adjIterator)->getWeight();
-// 				
+//
 // // 				std::cout << node2->getId() << "\t";
-// 
+//
 // // 				if(node2->getParent() == NULL)
 // 				if(!node2->visited())
 // 					Q->insert(node2);
-// 				
+//
 // 				relax(node1, node2, weight);
 // // 				usleep(5000);
 // 			}
 // 		}
-// 		
+//
 // 		std::cout << graph << std::endl;
-// 		
+//
 // // 		delete(S);
 // 		delete(Q);
 // 	}
 	
 	
 // 	static void run(Graph* graph, Node* s) {
-// 		
+//
 // // 		std::cout << std::endl<< "s: " << s->getId() << std::endl;
-// 
+//
 // 		Node *node1, *node2;
 // 		int weight;
-// 		
+//
 // // 		std::list<Node*>* S = new std::list<Node*>();
-// 		
+//
 // 		initializeSingleSource(graph, s);
-// 		
+//
 // 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
 // // 		Q->insert(s);
 // 		for(int t=1; t<graph->getNumberOfNodes();t++)
 // // 			if(graph->getNodeAt(t) != s)
 // 				Q->insert(graph->getNodeAt(t));
-// 		
-// 
+//
+//
 // 		std::list<Edge*>::iterator adjIterator;
 // 		std::list<Edge*>* adjList;
-// 		
-// 
+//
+//
 // 		while(Q->size() > 0) {
-// 
+//
 // // 			std::cout  << std::endl << "Q: " << Q;
 //  			node1 = Q->getMinimum();
 // 			Q->removeMinimum();
 // // 			node1->setVisited(true);
 // // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-// 
-// 			
+//
+//
 // 			adjList = node1->getAdjacenciesList();
 // 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 // 				node2 = (*adjIterator)->getNext();
 // 				weight = (*adjIterator)->getWeight();
-// 				
+//
 // // 				std::cout << node2->getId() << "\t";
-// 
+//
 // // 				if(node2->getParent() == NULL)
 // // 				if(!node2->visited())
 // // 					Q->insert(node2);
-// 				
+//
 // 				relax(node1, node2, weight);
 // 			}
 // 		}
-// 		
+//
 // // 		std::cout << graph << std::endl;
-// 		
+//
 // // 		delete(S);
 // 		delete(Q);
 // 	}
 
 
-	static bool compare_nocase (const Node* first, const Node* second) {
-		return ( first->getPathCost() < second->getPathCost() );
+// 	static bool compare_nocase (const Node* first, const Node* second) {
+// 		return ( first->getPathCost() < second->getPathCost() );
+// 	}
+//
+// 	static void run(Graph* graph, Node* s) {
+// 		Node *node1, *node2;
+// 		int weight;
+//
+// 		initializeSingleSource(graph, s);
+//
+// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
+// 		for(int t=1; t<graph->getNumberOfNodes();t++)
+// 			Q->insert(graph->getNodeAt(t));
+//
+// // 		std::list<Node*> *Q = new std::list<Node*>();
+// // 		for(int t=1; t<graph->getNumberOfNodes();t++)
+// // 			Q->push_back(graph->getNodeAt(t));
+//
+// 		std::list<Edge*>::iterator adjIterator;
+// 		std::list<Edge*>* adjList;
+//
+// 		while(Q->size() > 0) {
+// // 			std::cout  << std::endl << "Q: " << Q << std::endl;
+//
+// 			std::cout  << std::endl << "Q: " << Q;
+// // 			node1 = Q->getMinimum();
+// // 			Q->removeMinimum();
+// 			node1 = Q->extractMin();
+// 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
+//
+// // 			Q->sort(compare_nocase);			// Nlog(N)
+// // 			node1 = Q->front();
+// // 			Q->pop_front();
+//
+// 			adjList = node1->getAdjacenciesList();
+// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+// 				node2 = (*adjIterator)->getNext();
+// 				weight = (*adjIterator)->getWeight();
+//
+// 				relax(node1, node2, weight);
+// 			}
+// 		}
+//
+// 		delete(Q);
+// 	}
+	
+	
+// 	static bool compare_nocase (const Node* first, const Node* second) {
+// 		return ( first->getPathCost() < second->getPathCost() );
+// 	}
+
+// 	static void run(Graph* graph, Node* s) {
+// 		Node *node1, *node2;
+// 		int weight;
+		
+// 		initializeSingleSource(graph, s);
+		
+		
+// 		Node *nodes = new Node*[graph->getNumberOfNodes()];
+// 		typedef std::priority_queue<Node*, nodes, compare_nocase> MinHeap
+		
+// 		MinHeap *Q = new MinHeap()
+
+// 		std::list<Edge*>::iterator adjIterator;
+// 		std::list<Edge*>* adjList;
+		
+// 		while(Q->size() > 0) {
+// // 			std::cout  << std::endl << "Q: " << Q;
+// 			node1 = Q->top();
+// 			Q->pop();
+// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
+			
+// 			adjList = node1->getAdjacenciesList();
+// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+// 				node2 = (*adjIterator)->getNext();
+// 				weight = (*adjIterator)->getWeight();
+
+// 				relax(node1, node2, weight);
+// 			}
+// 		}
+		
+// 		delete[] nodes;
+// 		delete(Q);
+// 	}
+	
+	
+// ONLY CODE THAT WORKS (LIST)
+	static bool compare_nocase (Node* first, Node* second) {
+		return first->getPathCost() < second->getPathCost();
 	}
 
-	
-
 	static void run(Graph* graph, Node* s) {
+		std::list<Node*> *queue = new std::list<Node*>();
+		std::list<Edge*>::iterator adjIterator;
+		std::list<Edge*>* adjList;
+
 		Node *node1, *node2;
 		int weight;
 		
 		initializeSingleSource(graph, s);
 		
-// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-// 		for(int t=1; t<graph->getNumberOfNodes();t++)
-// 			Q->insert(graph->getNodeAt(t));
-		
-		std::list<Node*> *Q = new std::list<Node*>();
-		for(int t=1; t<graph->getNumberOfNodes();t++)
-			Q->push_back(graph->getNodeAt(t));
+		for(int u = 1; u < graph->getNumberOfNodes(); u++)
+			queue->push_back(graph->getNodeAt(u));
 
-		std::list<Edge*>::iterator adjIterator;
-		std::list<Edge*>* adjList;
+
 		
-		while(Q->size() > 0) {
-// 			std::cout  << std::endl << "Q: " << Q << std::endl;
-			
-// 			node1 = Q->getMinimum();
-// 			Q->removeMinimum();
-			
-			Q->sort(compare_nocase);			// Nlog(N)
-			node1 = Q->front();
-			Q->pop_front();
+		while(queue->size() > 0) {
+			queue->sort(compare_nocase);			// Nlog(N)
+			node1 = queue->front();
+			queue->pop_front();
 			
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
@@ -709,10 +926,46 @@ public:
 			}
 		}
 		
-		delete(Q);
+		delete(queue);
 	}
 	
 	
+// DOES NOT WORK CORRECTLY (PRIORITY QUEUE)
+	// class CompareNodes {
+	// public:
+	// 	bool operator() (Node *node1, Node *node2) {
+	// 		return node1->getPathCost() > node2->getPathCost();
+	// 	}
+	// };
+	
+	// static void run(Graph* graph, Node* s) {
+	// 	std::list<Edge*>::iterator adjIterator;
+	// 	std::list<Edge*>* adjList;
+	// 	std::priority_queue<Node*, std::vector<Node*>, CompareNodes> queue;
+		
+	// 	Node *node1, *node2;
+	// 	int weight;
+		
+	// 	initializeSingleSource(graph, s);
+
+	// 	for(int u = 1; u < graph->getNumberOfNodes(); u++)
+	// 		queue.push(graph->getNodeAt(u));
+		
+	// 	while(!queue.empty()) {
+	// 		node1 = queue.top();
+	// 		queue.pop();
+			
+	// 		adjList = node1->getAdjacenciesList();
+	// 		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+	// 			node2 = (*adjIterator)->getNext();
+	// 			weight = (*adjIterator)->getWeight();
+
+	// 			relax(node1, node2, weight);
+	// 		}
+	// 	}
+	// 	//delete(queue);
+	// 	std::cout << "DIJSKTRA ENDED" << std::endl;
+	// }
 	
 };
 
@@ -826,7 +1079,59 @@ class Johnson {
 	
 	
 public:
+// 	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
 
+// 		int F = subsidiaries->size();
+// 		int tempCost;
+		
+// 		int **deslocationCost = new int*[F];
+// 		int *aux = new int[F];
+		
+// 		for(int i=0; i<F; i++) {
+// 			deslocationCost[i] = new int[graph->getNumberOfNodes()];
+// 		}
+
+// 		connectSource(graph);
+// 		BellmanFord::run(graph, 0);
+// 		disconnectSource(graph);
+// // 		std::cout << graph << std::endl;
+
+// 		copyCostToH(graph);
+// 		for(int t = 1; t < graph->getNumberOfNodes(); t++){
+// 			graph->getNodeAt(t)->reweightEdges();
+// 		}
+
+// 		// std::cout << "before dijkstra " << graph << std::endl;
+
+
+// 		for(int u = 0; u < F; u++) {
+// 			Dijkstra::run(graph, subsidiaries->at(u));
+// // 			std::cout << "after dijkstra " << graph << std::endl;
+
+// 			for(int v = 1; v < graph->getNumberOfNodes(); v++){
+// 				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
+// 			}
+// 		}
+		
+// 		for(int v = 1; v < graph->getNumberOfNodes(); v++){
+// 			tempCost = 0;
+			
+// 			for(int u = 0; u < F; u++) {
+// 				tempCost += deslocationCost[u][v];
+// 			}
+			
+// 			if(tempCost < answer->totalLoss) {
+// 				answer->totalLoss = tempCost;
+// 				answer->location = v;
+				
+// 				for(int u = 0; u < F; u++)
+// 					aux[u] = deslocationCost[u][v];
+				
+// 				answer->deslocationCost = aux;
+// 			}
+// 		}
+// 	}
+	
  	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
 		std::list<int>::iterator listIterator;
  
@@ -918,7 +1223,6 @@ public:
 //
 // 		delete[] temp;
 // 	}
-
 
 };
 

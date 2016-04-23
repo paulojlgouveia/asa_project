@@ -214,36 +214,69 @@ public:
 // 	}
 	
 	
+// 	static bool compare_nocase (const Node* first, const Node* second) {
+// 		return ( first->getPathCost() < second->getPathCost() );
+// 	}
+
+// 	static void run(Graph* graph, Node* s) {
+// 		Node *node1, *node2;
+// 		int weight;
+		
+// 		initializeSingleSource(graph, s);
+		
+		
+// 		Node *nodes = new Node*[graph->getNumberOfNodes()];
+// 		typedef std::priority_queue<Node*, nodes, compare_nocase> MinHeap
+		
+// 		MinHeap *Q = new MinHeap()
+
+// 		std::list<Edge*>::iterator adjIterator;
+// 		std::list<Edge*>* adjList;
+		
+// 		while(Q->size() > 0) {
+// // 			std::cout  << std::endl << "Q: " << Q;
+// 			node1 = Q->top();
+// 			Q->pop();
+// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
+			
+// 			adjList = node1->getAdjacenciesList();
+// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+// 				node2 = (*adjIterator)->getNext();
+// 				weight = (*adjIterator)->getWeight();
+
+// 				relax(node1, node2, weight);
+// 			}
+// 		}
+		
+// 		delete[] nodes;
+// 		delete(Q);
+// 	}
 	
 	
-	
-	
-	
-	
-	static bool compare_nocase (const Node* first, const Node* second) {
-		return ( first->getPathCost() < second->getPathCost() );
+// ONLY CODE THAT WORKS (LIST)
+	static bool compare_nocase (Node* first, Node* second) {
+		return first->getPathCost() < second->getPathCost();
 	}
 
 	static void run(Graph* graph, Node* s) {
+		std::list<Node*> *queue = new std::list<Node*>();
+		std::list<Edge*>::iterator adjIterator;
+		std::list<Edge*>* adjList;
+
 		Node *node1, *node2;
 		int weight;
 		
 		initializeSingleSource(graph, s);
 		
-		
-		Node *nodes = new Node*[graph->getNumberOfNodes()];
-		typedef std::priority_queue<Node*, nodes, compare_nocase> MinHeap
-		
-		MinHeap *Q = new MinHeap()
+		for(int u = 1; u < graph->getNumberOfNodes(); u++)
+			queue->push_back(graph->getNodeAt(u));
 
-		std::list<Edge*>::iterator adjIterator;
-		std::list<Edge*>* adjList;
+
 		
-		while(Q->size() > 0) {
-// 			std::cout  << std::endl << "Q: " << Q;
-			node1 = Q->top();
-			Q->pop();
-// 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
+		while(queue->size() > 0) {
+			queue->sort(compare_nocase);			// Nlog(N)
+			node1 = queue->front();
+			queue->pop_front();
 			
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
@@ -254,9 +287,46 @@ public:
 			}
 		}
 		
-		delete[] nodes;
-		delete(Q);
+		delete(queue);
 	}
+	
+	
+// DOES NOT WORK CORRECTLY (PRIORITY QUEUE)
+	// class CompareNodes {
+	// public:
+	// 	bool operator() (Node *node1, Node *node2) {
+	// 		return node1->getPathCost() > node2->getPathCost();
+	// 	}
+	// };
+	
+	// static void run(Graph* graph, Node* s) {
+	// 	std::list<Edge*>::iterator adjIterator;
+	// 	std::list<Edge*>* adjList;
+	// 	std::priority_queue<Node*, std::vector<Node*>, CompareNodes> queue;
+		
+	// 	Node *node1, *node2;
+	// 	int weight;
+		
+	// 	initializeSingleSource(graph, s);
+
+	// 	for(int u = 1; u < graph->getNumberOfNodes(); u++)
+	// 		queue.push(graph->getNodeAt(u));
+		
+	// 	while(!queue.empty()) {
+	// 		node1 = queue.top();
+	// 		queue.pop();
+			
+	// 		adjList = node1->getAdjacenciesList();
+	// 		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
+	// 			node2 = (*adjIterator)->getNext();
+	// 			weight = (*adjIterator)->getWeight();
+
+	// 			relax(node1, node2, weight);
+	// 		}
+	// 	}
+	// 	//delete(queue);
+	// 	std::cout << "DIJSKTRA ENDED" << std::endl;
+	// }
 	
 };
 //MERGE_END
