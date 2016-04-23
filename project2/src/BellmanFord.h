@@ -18,7 +18,6 @@ class BellmanFord {
 	static void relax(Node *u, Node *v, int weight){
 		if(v->getPathCost() > (u->getPathCost() + weight)) {
 			v->setPathCost(u->getPathCost() + weight);
-			v->setParent(u);
 		}
 	}
 	

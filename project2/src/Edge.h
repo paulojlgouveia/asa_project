@@ -16,30 +16,23 @@ class Edge {
 
 
 public:
-
 // constructors
 	Edge(Node* next, int weight);
+	
 // destructors
 	virtual ~Edge();
-	
 	
 // getters
 	Node* getNext() const ;
 	int getWeight() const ;
 	
-
 // setters
 	void setNext(Node* next) ;
 	void setWeight(int weight) ;
 
-	
-// operators
-// 	inline friend std::ostream &operator<<(std::ostream &out, const Edge* edge) {
-//   		out << edge->getNext()->getId() << "|" << edge->getWeight();
-//   		return out;
-// 	}
-
 };
+
+
 //MERGE_END
 
 

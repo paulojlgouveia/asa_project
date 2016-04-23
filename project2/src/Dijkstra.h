@@ -16,13 +16,10 @@
 class Dijkstra {
 	
 public:
-// 	static void updateSolution(Solution* solution) {}
 
 	static void initializeSingleSource(Graph* graph, Node* s) {
 		for (int t = 0; t < graph->getNumberOfNodes(); t++) {
 			graph->getNodeAt(t)->setPathCost(99999);
-			graph->getNodeAt(t)->setParent(NULL);
-			graph->getNodeAt(t)->setVisited(false);
 		}
 		s->setPathCost(0);
 	}
@@ -31,20 +28,10 @@ public:
 		
 		if(v->getPathCost() > (u->getPathCost() + weight)) {
 			v->setPathCost(u->getPathCost() + weight);
-			v->setParent(u);
 			Q->decreaseKey(v->getHeapIndex());
 		}
-			v->setVisited(true);
 	}
-// 	static void relax(Node *u, Node *v, int weight, BMinHeap &Q){
-// 		
-// 		if(v->getPathCost() > (u->getPathCost() + weight)) {
-// 			v->setPathCost(u->getPathCost() + weight);
-// 			v->setParent(u);
-// 			Q.decreaseKey(v->getHeapIndex());
-// 		}
-// 			v->setVisited(true);
-// 	}
+
 
 
 	static void run(Graph* graph, int index) {
@@ -58,36 +45,31 @@ public:
 		
 		initializeSingleSource(graph, s);
 		
-// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-// 		for(int t=1; t<graph->getNumberOfNodes();t++)
-// 			Q->insert(graph->getNodeAt(t));
+		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
 		
-		BMinHeap Q(graph->getNumberOfNodes());
 		for(int t=1; t<graph->getNumberOfNodes();t++)
-			Q.insert(graph->getNodeAt(t));
+			Q->insert(graph->getNodeAt(t));
 
 		std::list<Edge*>::iterator adjIterator;
 		std::list<Edge*>* adjList;
 		
-		while(Q.size() > 0) {			
-// 			std::cout  << std::endl << "Q: " << Q;
-			node1 = Q.extractMin();
-// 			std::cout << std::endl << "removed " << node1->getId() << std::endl;
-			
+		while(Q->size() > 0) {			
+			node1 = Q->extractMin();
+
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
 				
-				relax(node1, node2, weight, &Q);
+				relax(node1, node2, weight, Q);
 			}
 		}
 		
-// 		delete(Q);
+		delete(Q);
 	}
 
-	
 };
+
 //MERGE_END
 
 #endif

@@ -29,7 +29,11 @@ release:
 	@rm -f al095_p2.o
 
 run:
-	./main < files/input/$(in).in
+	@for FILE in 1 2 3 4 t01 t02 t03 t04 t05 t06; do \
+		./main < files/input/$$FILE.in ; \
+		cat files/expected/$$FILE.out ; \
+		echo; \
+	done
 	
 memcheck:
 	@rm -f massif.out.*

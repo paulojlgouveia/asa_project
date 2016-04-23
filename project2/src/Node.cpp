@@ -2,16 +2,6 @@
 #include <climits>
 #include "Node.h"
 //MERGE_START
-// constructors
-Node::Node(int id) : _id(id), _adjSize(0), _pathCost(99999), _visited(false), _parent(NULL), _heapIndex(-1) {
-	_adjList = new std::list<Edge*>();
-}
-
-// destructors
-Node::~Node() {
-	deleteAdjacencies();
-}
-
 
 void Node::deleteAdjacencies() {
 	std::list<Edge*>::iterator adjIterator;
@@ -59,25 +49,7 @@ int Node::getReweightPathCost(Node *source) {
 }
 
 
-
-
-// operators
-std::ostream &operator<<(std::ostream &out, const Node *node) {
-	
-	std::list<Edge*>::iterator adjIterator;
-	std::list<Edge*>* adjList = node->getAdjacenciesList();
-	
-  	out << node->getId() << " (" << node->getPathCost() << "|" << node->getH() << "):   ";
-	
-	for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
- 		if(adjIterator != adjList->begin())
- 			out << " ,  ";
- 		out << (*adjIterator)->getNext()->getId();
- 		out << "|" << (*adjIterator)->getWeight();
-	}
-	
- 	return out;
- }
+ 
 //MERGE_END
  	
 
