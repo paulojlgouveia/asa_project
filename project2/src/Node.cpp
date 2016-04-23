@@ -3,7 +3,7 @@
 #include "Node.h"
 //MERGE_START
 // constructors
-Node::Node(int id) : _id(id), _adjSize(0), _pathCost(99999), _visited(false), _parent(NULL) {
+Node::Node(int id) : _id(id), _adjSize(0), _pathCost(99999), _visited(false), _parent(NULL), _heapIndex(-1) {
 	_adjList = new std::list<Edge*>();
 }
 

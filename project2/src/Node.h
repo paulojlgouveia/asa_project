@@ -19,7 +19,8 @@ class Node {
 	bool _visited;
 	Node* _parent;					// points to parent (used during search)
 	std::list<Edge*>* _adjList;		// list of adjacent nodes
-
+	int _heapIndex;
+	
 	
 public:
 
@@ -41,7 +42,7 @@ public:
 	bool visited() const { return _visited; }
 	Node* getParent() const { return _parent; }
 	std::list<Edge*>* getAdjacenciesList() const { return _adjList; }
-	
+	int getHeapIndex() const { return _heapIndex; }
 	
 // setters
 	void setId(int id) { _id = id; }
@@ -50,7 +51,8 @@ public:
 	
 	void setVisited(bool visited) { _visited = visited; }
 	void setParent(Node* parent) { _parent = parent; }
-	
+	void setHeapIndex(int index) { _heapIndex = index; }
+
 	
 // methods
 	void connect(Node* adjacent, int weight);
@@ -61,6 +63,13 @@ public:
 // operators
 	friend std::ostream &operator<<(std::ostream &out, const Node *node);
 
+// 	friend bool operator<(const Node& first, const Node& second) {
+// 		return ( first.getPathCost() < second.getPathCost() );
+// 	}
+// 	
+// 	friend bool operator<(const Node *first, const Node *second) {
+// 		return ( first->getPathCost() < second->getPathCost() );
+// 	}
 	
 };
 //MERGE_END

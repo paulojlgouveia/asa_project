@@ -48,100 +48,112 @@ class Johnson {
 	
 	
 public:
-// 	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
+	// corrigi frees e descomentei esta, comentei a outra para submeter
+	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
 
-// 		int F = subsidiaries->size();
-// 		int tempCost;
+		int F = subsidiaries->size();
+		int tempCost;
 		
-// 		int **deslocationCost = new int*[F];
-// 		int *aux = new int[F];
+		int **deslocationCost = new int*[F];
+		int *temp, *aux = new int[F];
 		
-// 		for(int i=0; i<F; i++) {
-// 			deslocationCost[i] = new int[graph->getNumberOfNodes()];
-// 		}
+		for(int i=0; i<F; i++) {
+			deslocationCost[i] = new int[graph->getNumberOfNodes()];
+		}
 
-// 		connectSource(graph);
-// 		BellmanFord::run(graph, 0);
-// 		disconnectSource(graph);
-// // 		std::cout << graph << std::endl;
+		connectSource(graph);
+		BellmanFord::run(graph, 0);
+		disconnectSource(graph);
+// 		std::cout << graph << std::endl;
 
-// 		copyCostToH(graph);
-// 		for(int t = 1; t < graph->getNumberOfNodes(); t++){
-// 			graph->getNodeAt(t)->reweightEdges();
-// 		}
+		copyCostToH(graph);
+		for(int t = 1; t < graph->getNumberOfNodes(); t++){
+			graph->getNodeAt(t)->reweightEdges();
+		}
 
-// 		// std::cout << "before dijkstra " << graph << std::endl;
+		// std::cout << "before dijkstra " << graph << std::endl;
 
 
-// 		for(int u = 0; u < F; u++) {
-// 			Dijkstra::run(graph, subsidiaries->at(u));
-// // 			std::cout << "after dijkstra " << graph << std::endl;
-
-// 			for(int v = 1; v < graph->getNumberOfNodes(); v++){
-// 				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
-// 			}
-// 		}
-		
-// 		for(int v = 1; v < graph->getNumberOfNodes(); v++){
-// 			tempCost = 0;
-			
-// 			for(int u = 0; u < F; u++) {
-// 				tempCost += deslocationCost[u][v];
-// 			}
-			
-// 			if(tempCost < answer->totalLoss) {
-// 				answer->totalLoss = tempCost;
-// 				answer->location = v;
-				
-// 				for(int u = 0; u < F; u++)
-// 					aux[u] = deslocationCost[u][v];
-				
-// 				answer->deslocationCost = aux;
-// 			}
-// 		}
-// 	}
-	
- 	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
-		std::list<int>::iterator listIterator;
- 
-		int V = graph->getNumberOfNodes();
- 		int F = subsidiaries->size();
- 		int *deslocationCost = new int[V];
- 		int bestLocation;
- 
- 		connectSource(graph);
- 		BellmanFord::run(graph, 0);
- 		disconnectSource(graph);
-  
- 		copyCostToH(graph);
- 		for(int t = 1; t < V; t++){
- 			graph->getNodeAt(t)->reweightEdges();
- 			deslocationCost[t] = 0;
- 		}
-
- 		for(int u = 0; u < F; u++) {
- 			Dijkstra::run(graph, subsidiaries->at(u));
- 
- 			for(int v = 0; v < V; v++){
-				if(deslocationCost[v] != 99999)
-					deslocationCost[v] += graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
-				else
-					deslocationCost[v] = 99999;
- 			}
- 		}
- 		
- 		bestLocation = getBestLocation(deslocationCost, V);
- 	
- 		//Check if best location is valid *FIXME*
- 		
- 		answer->totalLoss = deslocationCost[bestLocation];
-		answer->location = bestLocation;
- 	
- 		for(int u = 0; u < F; u++) {
+		for(int u = 0; u < F; u++) {
 			Dijkstra::run(graph, subsidiaries->at(u));
-			answer->deslocationCost[u] = graph->getNodeAt(bestLocation)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
- 		}
- 	}
+// 			std::cout << "after dijkstra " << graph << std::endl;
+
+			for(int v = 1; v < graph->getNumberOfNodes(); v++){
+				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
+			}
+		}
+		
+		for(int v = 1; v < graph->getNumberOfNodes(); v++){
+			tempCost = 0;
+			
+			for(int u = 0; u < F; u++) {
+				tempCost += deslocationCost[u][v];
+			}
+			
+			if(tempCost < answer->totalLoss) {
+				answer->totalLoss = tempCost;
+				answer->location = v;
+				
+				for(int u = 0; u < F; u++)
+					aux[u] = deslocationCost[u][v];
+				
+				temp = aux;
+				aux = answer->deslocationCost;
+				answer->deslocationCost = temp;
+			}
+		}
+		
+		for(int t=0; t<F; t++)
+			delete[] deslocationCost[t];
+		delete[] deslocationCost;
+		
+		delete[] aux;
+	}
+	
+//  	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
+// 		std::list<int>::iterator listIterator;
+//  
+// 		int V = graph->getNumberOfNodes();
+//  		int F = subsidiaries->size();
+//  		int *deslocationCost = new int[V];
+//  		int bestLocation;
+//  
+//  		connectSource(graph);
+//  		BellmanFord::run(graph, 0);
+//  		disconnectSource(graph);
+//   
+//  		copyCostToH(graph);
+//  		for(int t = 1; t < V; t++){
+//  			graph->getNodeAt(t)->reweightEdges();
+//  			deslocationCost[t] = 0;
+//  		}
+// 
+//  		for(int u = 0; u < F; u++) {
+//  			Dijkstra::run(graph, subsidiaries->at(u));
+//  
+//  			for(int v = 0; v < V; v++){
+// 				if(deslocationCost[v] != 99999)
+// 					deslocationCost[v] += graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
+// 				else
+// 					deslocationCost[v] = 99999;
+//  			}
+//  		}
+//  		
+//  		bestLocation = getBestLocation(deslocationCost, V);
+//  	
+//  		//Check if best location is valid *FIXME*
+//  		
+//  		answer->totalLoss = deslocationCost[bestLocation];
+// 		answer->location = bestLocation;
+//  	
+//  		for(int u = 0; u < F; u++) {
+// 			Dijkstra::run(graph, subsidiaries->at(u));
+// 			answer->deslocationCost[u] = graph->getNodeAt(bestLocation)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
+//  		}
+//  	}
+
+
+
 
 // 	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
 //

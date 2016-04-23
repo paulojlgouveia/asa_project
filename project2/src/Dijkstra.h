@@ -40,11 +40,13 @@ public:
 // 			then	d [v ] ← d [u ] + w (u , v )
 // 					π[v ] ← u
 
-	static void relax(Node *u, Node *v, int weight){
+	static void relax(Node *u, Node *v, int weight, BMinHeap *Q){
 		
 		if(v->getPathCost() > (u->getPathCost() + weight)) {
 			v->setPathCost(u->getPathCost() + weight);
 			v->setParent(u);
+			Q->decreaseKey(v->getHeapIndex());
+
 		}
 			v->setVisited(true);
 	}
@@ -65,268 +67,41 @@ public:
 		run(graph, graph->getNodeAt(index));
 	}
 
-// 	static void run(Graph* graph, Node* s) {
-//
-// 		std::cout << std::endl<< std::endl<< "s: " << s->getId() << std::endl;
-//
-// 		Node *node1, *node2;
-// 		int weight;
-//
-// // 		std::list<Node*>* S = new std::list<Node*>();
-//
-// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-// 		Q->insert(s);
-//
-// 		std::list<Edge*>::iterator adjIterator;
-// 		std::list<Edge*>* adjList;
-//
-// 		initializeSingleSource(graph, s);
-//
-// 		while(Q->size() > 0) {
-//
-// // 			std::cout  << std::endl << "Q: " << Q;
-//  			node1 = Q->getMinimum();
-// 			Q->removeMinimum();
-// 			node1->setVisited(true);
-// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-//
-//
-// 			adjList = node1->getAdjacenciesList();
-// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-// 				node2 = (*adjIterator)->getNext();
-// 				weight = (*adjIterator)->getWeight();
-//
-// // 				std::cout << node2->getId() << "\t";
-//
-// // 				if(node2->getParent() == NULL)
-// 				if(!node2->visited())
-// 					Q->insert(node2);
-//
-// 				relax(node1, node2, weight);
-// // 				usleep(5000);
-// 			}
-// 		}
-//
-// 		std::cout << graph << std::endl;
-//
-// // 		delete(S);
-// 		delete(Q);
-// 	}
-	
-	
-// 	static void run(Graph* graph, Node* s) {
-//
-// // 		std::cout << std::endl<< "s: " << s->getId() << std::endl;
-//
-// 		Node *node1, *node2;
-// 		int weight;
-//
-// // 		std::list<Node*>* S = new std::list<Node*>();
-//
-// 		initializeSingleSource(graph, s);
-//
-// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-// // 		Q->insert(s);
-// 		for(int t=1; t<graph->getNumberOfNodes();t++)
-// // 			if(graph->getNodeAt(t) != s)
-// 				Q->insert(graph->getNodeAt(t));
-//
-//
-// 		std::list<Edge*>::iterator adjIterator;
-// 		std::list<Edge*>* adjList;
-//
-//
-// 		while(Q->size() > 0) {
-//
-// // 			std::cout  << std::endl << "Q: " << Q;
-//  			node1 = Q->getMinimum();
-// 			Q->removeMinimum();
-// // 			node1->setVisited(true);
-// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-//
-//
-// 			adjList = node1->getAdjacenciesList();
-// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-// 				node2 = (*adjIterator)->getNext();
-// 				weight = (*adjIterator)->getWeight();
-//
-// // 				std::cout << node2->getId() << "\t";
-//
-// // 				if(node2->getParent() == NULL)
-// // 				if(!node2->visited())
-// // 					Q->insert(node2);
-//
-// 				relax(node1, node2, weight);
-// 			}
-// 		}
-//
-// // 		std::cout << graph << std::endl;
-//
-// // 		delete(S);
-// 		delete(Q);
-// 	}
 
-
-// 	static bool compare_nocase (const Node* first, const Node* second) {
-// 		return ( first->getPathCost() < second->getPathCost() );
-// 	}
-//
-// 	static void run(Graph* graph, Node* s) {
-// 		Node *node1, *node2;
-// 		int weight;
-//
-// 		initializeSingleSource(graph, s);
-//
-// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-// 		for(int t=1; t<graph->getNumberOfNodes();t++)
-// 			Q->insert(graph->getNodeAt(t));
-//
-// // 		std::list<Node*> *Q = new std::list<Node*>();
-// // 		for(int t=1; t<graph->getNumberOfNodes();t++)
-// // 			Q->push_back(graph->getNodeAt(t));
-//
-// 		std::list<Edge*>::iterator adjIterator;
-// 		std::list<Edge*>* adjList;
-//
-// 		while(Q->size() > 0) {
-// // 			std::cout  << std::endl << "Q: " << Q << std::endl;
-//
-// 			std::cout  << std::endl << "Q: " << Q;
-// // 			node1 = Q->getMinimum();
-// // 			Q->removeMinimum();
-// 			node1 = Q->extractMin();
-// 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-//
-// // 			Q->sort(compare_nocase);			// Nlog(N)
-// // 			node1 = Q->front();
-// // 			Q->pop_front();
-//
-// 			adjList = node1->getAdjacenciesList();
-// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-// 				node2 = (*adjIterator)->getNext();
-// 				weight = (*adjIterator)->getWeight();
-//
-// 				relax(node1, node2, weight);
-// 			}
-// 		}
-//
-// 		delete(Q);
-// 	}
-	
-	
-// 	static bool compare_nocase (const Node* first, const Node* second) {
-// 		return ( first->getPathCost() < second->getPathCost() );
-// 	}
-
-// 	static void run(Graph* graph, Node* s) {
-// 		Node *node1, *node2;
-// 		int weight;
-		
-// 		initializeSingleSource(graph, s);
-		
-		
-// 		Node *nodes = new Node*[graph->getNumberOfNodes()];
-// 		typedef std::priority_queue<Node*, nodes, compare_nocase> MinHeap
-		
-// 		MinHeap *Q = new MinHeap()
-
-// 		std::list<Edge*>::iterator adjIterator;
-// 		std::list<Edge*>* adjList;
-		
-// 		while(Q->size() > 0) {
-// // 			std::cout  << std::endl << "Q: " << Q;
-// 			node1 = Q->top();
-// 			Q->pop();
-// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-			
-// 			adjList = node1->getAdjacenciesList();
-// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-// 				node2 = (*adjIterator)->getNext();
-// 				weight = (*adjIterator)->getWeight();
-
-// 				relax(node1, node2, weight);
-// 			}
-// 		}
-		
-// 		delete[] nodes;
-// 		delete(Q);
-// 	}
-	
-	
-// ONLY CODE THAT WORKS (LIST)
-	static bool compare_nocase (Node* first, Node* second) {
-		return first->getPathCost() < second->getPathCost();
+	static bool compare_nocase (const Node* first, const Node* second) {
+		return ( first->getPathCost() < second->getPathCost() );
 	}
 
 	static void run(Graph* graph, Node* s) {
-		std::list<Node*> *queue = new std::list<Node*>();
-		std::list<Edge*>::iterator adjIterator;
-		std::list<Edge*>* adjList;
-
 		Node *node1, *node2;
 		int weight;
 		
 		initializeSingleSource(graph, s);
 		
-		for(int u = 1; u < graph->getNumberOfNodes(); u++)
-			queue->push_back(graph->getNodeAt(u));
+		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
+		for(int t=1; t<graph->getNumberOfNodes();t++)
+			Q->insert(graph->getNodeAt(t));
 
-
+		std::list<Edge*>::iterator adjIterator;
+		std::list<Edge*>* adjList;
 		
-		while(queue->size() > 0) {
-			queue->sort(compare_nocase);			// Nlog(N)
-			node1 = queue->front();
-			queue->pop_front();
+		while(Q->size() > 0) {			
+// 			std::cout  << std::endl << "Q: " << Q;
+			node1 = Q->extractMin();
+// 			std::cout << std::endl << "removed " << node1->getId() << std::endl;
 			
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
-
-				relax(node1, node2, weight);
+				
+				relax(node1, node2, weight, Q);
 			}
 		}
 		
-		delete(queue);
+		delete(Q);
 	}
-	
-	
-// DOES NOT WORK CORRECTLY (PRIORITY QUEUE)
-	// class CompareNodes {
-	// public:
-	// 	bool operator() (Node *node1, Node *node2) {
-	// 		return node1->getPathCost() > node2->getPathCost();
-	// 	}
-	// };
-	
-	// static void run(Graph* graph, Node* s) {
-	// 	std::list<Edge*>::iterator adjIterator;
-	// 	std::list<Edge*>* adjList;
-	// 	std::priority_queue<Node*, std::vector<Node*>, CompareNodes> queue;
-		
-	// 	Node *node1, *node2;
-	// 	int weight;
-		
-	// 	initializeSingleSource(graph, s);
 
-	// 	for(int u = 1; u < graph->getNumberOfNodes(); u++)
-	// 		queue.push(graph->getNodeAt(u));
-		
-	// 	while(!queue.empty()) {
-	// 		node1 = queue.top();
-	// 		queue.pop();
-			
-	// 		adjList = node1->getAdjacenciesList();
-	// 		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-	// 			node2 = (*adjIterator)->getNext();
-	// 			weight = (*adjIterator)->getWeight();
-
-	// 			relax(node1, node2, weight);
-	// 		}
-	// 	}
-	// 	//delete(queue);
-	// 	std::cout << "DIJSKTRA ENDED" << std::endl;
-	// }
 	
 };
 //MERGE_END

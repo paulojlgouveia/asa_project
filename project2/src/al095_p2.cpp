@@ -65,7 +65,8 @@ class Node {
 	bool _visited;
 	Node* _parent;					// points to parent (used during search)
 	std::list<Edge*>* _adjList;		// list of adjacent nodes
-
+	int _heapIndex;
+	
 	
 public:
 
@@ -87,7 +88,7 @@ public:
 	bool visited() const { return _visited; }
 	Node* getParent() const { return _parent; }
 	std::list<Edge*>* getAdjacenciesList() const { return _adjList; }
-	
+	int getHeapIndex() const { return _heapIndex; }
 	
 // setters
 	void setId(int id) { _id = id; }
@@ -96,7 +97,8 @@ public:
 	
 	void setVisited(bool visited) { _visited = visited; }
 	void setParent(Node* parent) { _parent = parent; }
-	
+	void setHeapIndex(int index) { _heapIndex = index; }
+
 	
 // methods
 	void connect(Node* adjacent, int weight);
@@ -107,6 +109,13 @@ public:
 // operators
 	friend std::ostream &operator<<(std::ostream &out, const Node *node);
 
+// 	friend bool operator<(const Node& first, const Node& second) {
+// 		return ( first.getPathCost() < second.getPathCost() );
+// 	}
+// 	
+// 	friend bool operator<(const Node *first, const Node *second) {
+// 		return ( first->getPathCost() < second->getPathCost() );
+// 	}
 	
 };
 
@@ -133,7 +142,7 @@ void Edge::setWeight(int weight) { _weight = weight; }
 /*************************** src/Node.cpp ***************************/
 
 // constructors
-Node::Node(int id) : _id(id), _adjSize(0), _pathCost(99999), _visited(false), _parent(NULL) {
+Node::Node(int id) : _id(id), _adjSize(0), _pathCost(99999), _visited(false), _parent(NULL), _heapIndex(-1) {
 	_adjList = new std::list<Edge*>();
 }
 
@@ -301,6 +310,7 @@ public:
 /*************************** src/BHeap.h ***************************/
 
 
+
 class BMinHeap {
 	Node **_data;
 	int _heapSize;
@@ -318,80 +328,16 @@ class BMinHeap {
 		return (nodeIndex - 1) / 2;
 	}
 	
-	void fixUp(int nodeIndex) {
-		Node *temp;
-		int parentIndex;
+	void swap(int a, int b) {
+		Node *temp = _data[a];
+		_data[a] = _data[b];
+		_data[b] = temp;
 		
-		if (nodeIndex != 0) {
-			parentIndex = getParentIndex(nodeIndex);
-			if (_data[parentIndex]->getPathCost() > _data[nodeIndex]->getPathCost()) {
-				temp = _data[parentIndex];
-				_data[parentIndex] = _data[nodeIndex];
-				_data[nodeIndex] = temp;
-				fixUp(parentIndex);
-			}
-		}
+		_data[a]->setHeapIndex(a);
+		_data[b]->setHeapIndex(b);
+		
 	}
 	
-	void fixDown(int nodeIndex) {
-		Node *temp;
-		int leftChildIndex, rightChildIndex, minIndex;
-		
-		leftChildIndex = getLeftChildIndex(nodeIndex);
-		rightChildIndex = getRightChildIndex(nodeIndex);
-		
-		if(rightChildIndex >= _heapSize) {
-			if(leftChildIndex >= _heapSize)
-				return;
-			else
-				minIndex = leftChildIndex;
-		} else {
-			if(_data[leftChildIndex]->getPathCost() <= _data[rightChildIndex]->getPathCost())
-				minIndex = leftChildIndex;
-			else
-				minIndex = rightChildIndex;
-		}
-		
-		if(_data[nodeIndex]->getPathCost() > _data[minIndex]->getPathCost()) {
-			temp = _data[minIndex];
-			_data[minIndex] = _data[nodeIndex];
-			_data[nodeIndex] = temp;
-			fixDown(minIndex);
-		}
-	}
-	
-	void minHeapify(int nodeIndex) {
-		Node *temp;
-		int leftChildIndex, rightChildIndex, minIndex;
-		int leftChildWeight, rightChildWeight, minWeight;
-		
-		leftChildIndex = getLeftChildIndex(nodeIndex);
-		rightChildIndex = getRightChildIndex(nodeIndex);
-		
-		leftChildWeight = _data[leftChildIndex]->getPathCost();
-		rightChildWeight = _data[leftChildIndex]->getPathCost();
-		minWeight = _data[nodeIndex]->getPathCost();
-		
-		if(leftChildIndex <= _heapSize && leftChildWeight < minWeight)
-			minIndex = leftChildIndex;
-		else
-			minIndex = nodeIndex;
-		
-		minWeight = _data[minIndex]->getPathCost();
-		
-		if(rightChildIndex <= _heapSize && rightChildWeight < minWeight)
-			minIndex = rightChildIndex;
-		
-		if(minIndex != nodeIndex) {
-			temp = _data[minIndex];
-			_data[minIndex] = _data[nodeIndex];
-			_data[nodeIndex] = temp;
-			minHeapify(minIndex);
-		}
-	}
-	
-
-
 public:
 	BMinHeap(int size) {
 		_data = new Node*[size];
@@ -400,7 +346,8 @@ public:
 	}
 	
 	~BMinHeap() {
-		delete[] _data;
+		delete(_data);
+// 		delete[] _data;
 	}
 	
 	bool isEmpty() { return (_heapSize == 0); }
@@ -408,38 +355,50 @@ public:
 	int capacity() const { return _arraySize; }
 	Node* at(int index) const { return _data[index]; }
 	
-	Node* getMinimum() {
-		if (isEmpty()) {
-			std::cout  << std::endl << "Heap is empty" << std::endl;
-			throw std::string("Heap is empty");
-		} else {
-			return _data[0];
-		}
-	}
-
-	void removeMinimum() {
-		if(isEmpty()) {
-			std::cout  << std::endl << "Heap is empty" << std::endl;
-			throw std::string("Heap is empty");
-		} else {
-			_data[0] = _data[_heapSize - 1];
-// 			_data[_heapSize-1] = NULL;
-			_heapSize--;
-			if (_heapSize > 0)
-				fixDown(0);
+	
+	void fixUp(int nodeIndex) {
+		int parentIndex;
+		
+		if (nodeIndex != 0) {
+			parentIndex = getParentIndex(nodeIndex);
+			if (_data[parentIndex]->getPathCost() > _data[nodeIndex]->getPathCost()) {
+				swap(parentIndex, nodeIndex);
+				fixUp(parentIndex);
+			}
 		}
 	}
 	
-	
-	Node* extractMin() {
-		minHeapify(0);
-		Node *min = _data[0];
-		_data[0] = _data[_heapSize -1];
-		_heapSize--;
-		return min;
+	void fixDown(int nodeIndex) {		
+		int leftChildIndex, rightChildIndex, minIndex;
+		int leftChildWeight, rightChildWeight, minWeight;
+		
+		if(nodeIndex < _heapSize) {			
+			minIndex = nodeIndex;
+			minWeight = _data[nodeIndex]->getPathCost();
+			
+			leftChildIndex = getLeftChildIndex(nodeIndex);
+			if(leftChildIndex < _heapSize) {
+				leftChildWeight = _data[leftChildIndex]->getPathCost();
+				if(leftChildWeight < minWeight) {
+					minIndex = leftChildIndex;
+					minWeight = _data[minIndex]->getPathCost();
+				}
+			}
+			
+			rightChildIndex = getRightChildIndex(nodeIndex);
+			if(rightChildIndex < _heapSize ) {
+				rightChildWeight = _data[rightChildIndex]->getPathCost();
+				if(rightChildWeight < minWeight) {
+					minIndex = rightChildIndex;
+				}
+			}
+			
+			if(minIndex != nodeIndex) {
+				swap(nodeIndex, minIndex);
+				fixDown(minIndex);
+			}
+		}
 	}
-	
-
 	
 	void insert(Node* node) {
 		if (_heapSize == _arraySize) {
@@ -448,36 +407,59 @@ public:
 		} else {
 			_heapSize++;
 			_data[_heapSize - 1] = node;
+			node->setHeapIndex(_heapSize-1);
 			fixUp(_heapSize - 1);
 		}
 	}
 	
+	Node* extractMin() {
+		if (_heapSize > 0) {
+			Node *min = _data[0];
+// 			_data[0] = _data[_heapSize -1];
+// 			_data[0]->setHeapIndex(0);
+			swap(0, _heapSize-1);
+			
+			_heapSize--;
+			fixDown(0);
+			return min;
+		} else {
+			std::cout  << std::endl << "empty" << std::endl;
+			throw std::string("empty");
+		}
+	}
 	
+	void decreaseKey(int index) {
+		while(index > 0 && _data[getParentIndex(index)]->getPathCost() > _data[index]->getPathCost()) {
+			swap(getParentIndex(index), index);
+			index = getParentIndex(index);
+		}
+	}
+
+
 	friend std::ostream &operator<<(std::ostream &out, const BMinHeap *heap) {
 		out << std::endl;
 		out << "heap size: " << heap->size() << std::endl;
 		out << "max heap size: " << heap->capacity() << std::endl;
 		
-  		for(int t=0; t<heap->size(); t++)
- 			out << heap->at(t)->getPathCost() << " ";
+  		for(int t=0; t<heap->size(); t++) {
+// 			out << heap->at(t)->getPathCost() << " ";
+			out << heap->at(t)->getHeapIndex() << ",";
+			out << heap->at(t)->getId() << "  ";
+		}
  		
  		return out;
  	}
-	
-	friend std::ostream &operator<<(std::ostream &out, const BMinHeap &heap) {
-		out << std::endl;
-		out << "heap size: " << heap.size() << std::endl;
-		out << "max heap size: " << heap.capacity() << std::endl;
-		
-  		for(int t=0; t<heap.size(); t++)
-			out << heap.at(t)->getPathCost() << " ";
- 		
- 		return out;
- 	}
-
+ 	
+ 	
 };
 
-// class BMaxHeap {
+
+
+
+
+
+
+// class BMinHeap {
 // 	Node **_data;
 // 	int _heapSize;
 // 	int _arraySize;
@@ -494,47 +476,93 @@ public:
 // 		return (nodeIndex - 1) / 2;
 // 	}
 // 	
-// 	
-// 	void maxHeapify(int nodeIndex) {
+// public:
+// 	void fixUp(int nodeIndex) {
 // 		Node *temp;
-// 		int leftChildIndex, rightChildIndex, maxIndex;
-// 		int leftChildWeight, rightChildWeight, maxWeight;
+// 		int parentIndex;
+// 		
+// 		if (nodeIndex != 0) {
+// 			parentIndex = getParentIndex(nodeIndex);
+// 			if (_data[parentIndex]->getPathCost() > _data[nodeIndex]->getPathCost()) {
+// 				temp = _data[parentIndex];
+// 				_data[parentIndex] = _data[nodeIndex];
+// 				_data[nodeIndex] = temp;
+// 					_data[parentIndex]->setHeapIndex(nodeIndex);
+// 					_data[nodeIndex]->setHeapIndex(parentIndex);
+// 				fixUp(parentIndex);
+// 			}
+// 		}
+// 	}
+// 	
+// 	void fixDown(int nodeIndex) {
+// 		Node *temp;
+// 		int leftChildIndex, rightChildIndex, minIndex;
 // 		
 // 		leftChildIndex = getLeftChildIndex(nodeIndex);
 // 		rightChildIndex = getRightChildIndex(nodeIndex);
 // 		
-// 		leftChildWeight = _data[leftChildIndex]->getPathCost();
-// 		rightChildWeight = _data[leftChildIndex]->getPathCost();
-// 		maxWeight = _data[nodeIndex]->getPathCost();
+// 		if(rightChildIndex >= _heapSize) {
+// 			if(leftChildIndex >= _heapSize)
+// 				return;
+// 			else
+// 				minIndex = leftChildIndex;
+// 		} else {
+// 			if(_data[leftChildIndex]->getPathCost() <= _data[rightChildIndex]->getPathCost())
+// 				minIndex = leftChildIndex;
+// 			else
+// 				minIndex = rightChildIndex;
+// 		}
 // 		
-// 		if(leftChildIndex <= _heapSize && leftChildWeight < maxWeight)
-// 			maxIndex = leftChildIndex;
-// 		else
-// 			maxIndex = nodeIndex;
-// 		
-// 		maxWeight = _data[maxIndex]->getPathCost();
-// 		
-// 		if(rightChildIndex <= _heapSize && rightChildWeight < maxWeight)
-// 			maxIndex = rightChildIndex;
-// 		
-// 		if(maxIndex != nodeIndex) {
-// 			temp = _data[maxIndex];
-// 			_data[maxIndex] = _data[nodeIndex];
+// 		if(_data[nodeIndex]->getPathCost() > _data[minIndex]->getPathCost()) {
+// 			temp = _data[minIndex];
+// 			_data[minIndex] = _data[nodeIndex];
 // 			_data[nodeIndex] = temp;
-// 			minHeapify(maxIndex);
+// 				_data[minIndex]->setHeapIndex(nodeIndex);
+// 				_data[nodeIndex]->setHeapIndex(minIndex);
+// 			fixDown(minIndex);
+// 		}
+// 	}
+// 	
+// 	void minHeapify(int nodeIndex) {
+// 		Node *temp;
+// 		int leftChildIndex, rightChildIndex, minIndex;
+// 		int leftChildWeight, rightChildWeight, minWeight;
+// 		
+// 		leftChildIndex = getLeftChildIndex(nodeIndex);
+// 		rightChildIndex = getRightChildIndex(nodeIndex);
+// 		minIndex = nodeIndex;
+// 		
+// 		leftChildWeight = _data[leftChildIndex]->getPathCost();
+// 		rightChildWeight = _data[rightChildIndex]->getPathCost();
+// 		minWeight = _data[nodeIndex]->getPathCost();
+// 		
+// 		if(leftChildIndex < _heapSize && leftChildWeight < minWeight) {
+// 			minIndex = leftChildIndex;
+// 			minWeight = _data[minIndex]->getPathCost();
+// 		}
+// 		
+// 		
+// 		if(rightChildIndex < _heapSize && rightChildWeight < minWeight) {
+// 			minIndex = rightChildIndex;
+// 		}
+// 		
+// 		if(minIndex != nodeIndex) {
+// 			temp = _data[minIndex];
+// 			_data[minIndex] = _data[nodeIndex];
+// 			_data[nodeIndex] = temp;
+// 			minHeapify(minIndex);
 // 		}
 // 	}
 // 	
 // 
 // 
-// public:
-// 	BMaxHeap(int size) {
+// 	BMinHeap(int size) {
 // 		_data = new Node*[size];
 // 		_heapSize = 0;
 // 		_arraySize = size;
 // 	}
 // 	
-// 	~BMaxHeap() {
+// 	~BMinHeap() {
 // 		delete[] _data;
 // 	}
 // 	
@@ -548,7 +576,6 @@ public:
 // 			std::cout  << std::endl << "Heap is empty" << std::endl;
 // 			throw std::string("Heap is empty");
 // 		} else {
-// 			minHeapify(0);
 // 			return _data[0];
 // 		}
 // 	}
@@ -559,13 +586,43 @@ public:
 // 			throw std::string("Heap is empty");
 // 		} else {
 // 			_data[0] = _data[_heapSize - 1];
-// 			_data[_heapSize-1] = NULL;
+// // 			_data[_heapSize-1] = NULL;
 // 			_heapSize--;
-// 			minHeapify(0);
 // 			if (_heapSize > 0)
 // 				fixDown(0);
 // 		}
 // 	}
+// 	
+// 	
+// 	void buildHeap() {
+// 		for(int t=(_heapSize-1)/2; t>0; t--)
+// 			minHeapify(t);
+// 	}
+// 	
+// 	
+// 	void modify(int index) {
+// 		Node *temp;
+// 		while(index > 0 && _data[getParentIndex(index)]->getPathCost() > _data[index]->getPathCost()) {
+// 			temp = _data[getParentIndex(index)];
+// 			_data[getParentIndex(index)] = _data[index];
+// 			_data[index] = temp;
+// 				_data[getParentIndex(index)]->setHeapIndex(index);
+// 				_data[index]->setHeapIndex(getParentIndex(index));
+// 			
+// 			index = getParentIndex(index);
+// 		}
+// 	}
+// 	
+// 	
+// 	Node* extractMin() {
+// 		Node *min = _data[0];
+// 		_data[0] = _data[_heapSize -1];
+// 		_heapSize--;
+// 		minHeapify(0);
+// 		return min;
+// 	}
+// 	
+// 
 // 	
 // 	void insert(Node* node) {
 // 		if (_heapSize == _arraySize) {
@@ -579,7 +636,7 @@ public:
 // 	}
 // 	
 // 	
-// 	friend std::ostream &operator<<(std::ostream &out, const BMaxHeap *heap) {
+// 	friend std::ostream &operator<<(std::ostream &out, const BMinHeap *heap) {
 // 		out << std::endl;
 // 		out << "heap size: " << heap->size() << std::endl;
 // 		out << "max heap size: " << heap->capacity() << std::endl;
@@ -590,7 +647,7 @@ public:
 //  		return out;
 //  	}
 // 	
-// 	friend std::ostream &operator<<(std::ostream &out, const BMaxHeap &heap) {
+// 	friend std::ostream &operator<<(std::ostream &out, const BMinHeap &heap) {
 // 		out << std::endl;
 // 		out << "heap size: " << heap.size() << std::endl;
 // 		out << "max heap size: " << heap.capacity() << std::endl;
@@ -600,7 +657,10 @@ public:
 //  		
 //  		return out;
 //  	}
+// 
 // };
+
+
 
 
 
@@ -679,11 +739,13 @@ public:
 // 			then	d [v ] ← d [u ] + w (u , v )
 // 					π[v ] ← u
 
-	static void relax(Node *u, Node *v, int weight){
+	static void relax(Node *u, Node *v, int weight, BMinHeap *Q){
 		
 		if(v->getPathCost() > (u->getPathCost() + weight)) {
 			v->setPathCost(u->getPathCost() + weight);
 			v->setParent(u);
+			Q->decreaseKey(v->getHeapIndex());
+
 		}
 			v->setVisited(true);
 	}
@@ -704,268 +766,41 @@ public:
 		run(graph, graph->getNodeAt(index));
 	}
 
-// 	static void run(Graph* graph, Node* s) {
-//
-// 		std::cout << std::endl<< std::endl<< "s: " << s->getId() << std::endl;
-//
-// 		Node *node1, *node2;
-// 		int weight;
-//
-// // 		std::list<Node*>* S = new std::list<Node*>();
-//
-// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-// 		Q->insert(s);
-//
-// 		std::list<Edge*>::iterator adjIterator;
-// 		std::list<Edge*>* adjList;
-//
-// 		initializeSingleSource(graph, s);
-//
-// 		while(Q->size() > 0) {
-//
-// // 			std::cout  << std::endl << "Q: " << Q;
-//  			node1 = Q->getMinimum();
-// 			Q->removeMinimum();
-// 			node1->setVisited(true);
-// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-//
-//
-// 			adjList = node1->getAdjacenciesList();
-// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-// 				node2 = (*adjIterator)->getNext();
-// 				weight = (*adjIterator)->getWeight();
-//
-// // 				std::cout << node2->getId() << "\t";
-//
-// // 				if(node2->getParent() == NULL)
-// 				if(!node2->visited())
-// 					Q->insert(node2);
-//
-// 				relax(node1, node2, weight);
-// // 				usleep(5000);
-// 			}
-// 		}
-//
-// 		std::cout << graph << std::endl;
-//
-// // 		delete(S);
-// 		delete(Q);
-// 	}
-	
-	
-// 	static void run(Graph* graph, Node* s) {
-//
-// // 		std::cout << std::endl<< "s: " << s->getId() << std::endl;
-//
-// 		Node *node1, *node2;
-// 		int weight;
-//
-// // 		std::list<Node*>* S = new std::list<Node*>();
-//
-// 		initializeSingleSource(graph, s);
-//
-// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-// // 		Q->insert(s);
-// 		for(int t=1; t<graph->getNumberOfNodes();t++)
-// // 			if(graph->getNodeAt(t) != s)
-// 				Q->insert(graph->getNodeAt(t));
-//
-//
-// 		std::list<Edge*>::iterator adjIterator;
-// 		std::list<Edge*>* adjList;
-//
-//
-// 		while(Q->size() > 0) {
-//
-// // 			std::cout  << std::endl << "Q: " << Q;
-//  			node1 = Q->getMinimum();
-// 			Q->removeMinimum();
-// // 			node1->setVisited(true);
-// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-//
-//
-// 			adjList = node1->getAdjacenciesList();
-// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-// 				node2 = (*adjIterator)->getNext();
-// 				weight = (*adjIterator)->getWeight();
-//
-// // 				std::cout << node2->getId() << "\t";
-//
-// // 				if(node2->getParent() == NULL)
-// // 				if(!node2->visited())
-// // 					Q->insert(node2);
-//
-// 				relax(node1, node2, weight);
-// 			}
-// 		}
-//
-// // 		std::cout << graph << std::endl;
-//
-// // 		delete(S);
-// 		delete(Q);
-// 	}
 
-
-// 	static bool compare_nocase (const Node* first, const Node* second) {
-// 		return ( first->getPathCost() < second->getPathCost() );
-// 	}
-//
-// 	static void run(Graph* graph, Node* s) {
-// 		Node *node1, *node2;
-// 		int weight;
-//
-// 		initializeSingleSource(graph, s);
-//
-// 		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
-// 		for(int t=1; t<graph->getNumberOfNodes();t++)
-// 			Q->insert(graph->getNodeAt(t));
-//
-// // 		std::list<Node*> *Q = new std::list<Node*>();
-// // 		for(int t=1; t<graph->getNumberOfNodes();t++)
-// // 			Q->push_back(graph->getNodeAt(t));
-//
-// 		std::list<Edge*>::iterator adjIterator;
-// 		std::list<Edge*>* adjList;
-//
-// 		while(Q->size() > 0) {
-// // 			std::cout  << std::endl << "Q: " << Q << std::endl;
-//
-// 			std::cout  << std::endl << "Q: " << Q;
-// // 			node1 = Q->getMinimum();
-// // 			Q->removeMinimum();
-// 			node1 = Q->extractMin();
-// 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-//
-// // 			Q->sort(compare_nocase);			// Nlog(N)
-// // 			node1 = Q->front();
-// // 			Q->pop_front();
-//
-// 			adjList = node1->getAdjacenciesList();
-// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-// 				node2 = (*adjIterator)->getNext();
-// 				weight = (*adjIterator)->getWeight();
-//
-// 				relax(node1, node2, weight);
-// 			}
-// 		}
-//
-// 		delete(Q);
-// 	}
-	
-	
-// 	static bool compare_nocase (const Node* first, const Node* second) {
-// 		return ( first->getPathCost() < second->getPathCost() );
-// 	}
-
-// 	static void run(Graph* graph, Node* s) {
-// 		Node *node1, *node2;
-// 		int weight;
-		
-// 		initializeSingleSource(graph, s);
-		
-		
-// 		Node *nodes = new Node*[graph->getNumberOfNodes()];
-// 		typedef std::priority_queue<Node*, nodes, compare_nocase> MinHeap
-		
-// 		MinHeap *Q = new MinHeap()
-
-// 		std::list<Edge*>::iterator adjIterator;
-// 		std::list<Edge*>* adjList;
-		
-// 		while(Q->size() > 0) {
-// // 			std::cout  << std::endl << "Q: " << Q;
-// 			node1 = Q->top();
-// 			Q->pop();
-// // 			std::cout << std::endl << "removed "<< node1->getId() << std::endl;
-			
-// 			adjList = node1->getAdjacenciesList();
-// 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-// 				node2 = (*adjIterator)->getNext();
-// 				weight = (*adjIterator)->getWeight();
-
-// 				relax(node1, node2, weight);
-// 			}
-// 		}
-		
-// 		delete[] nodes;
-// 		delete(Q);
-// 	}
-	
-	
-// ONLY CODE THAT WORKS (LIST)
-	static bool compare_nocase (Node* first, Node* second) {
-		return first->getPathCost() < second->getPathCost();
+	static bool compare_nocase (const Node* first, const Node* second) {
+		return ( first->getPathCost() < second->getPathCost() );
 	}
 
 	static void run(Graph* graph, Node* s) {
-		std::list<Node*> *queue = new std::list<Node*>();
-		std::list<Edge*>::iterator adjIterator;
-		std::list<Edge*>* adjList;
-
 		Node *node1, *node2;
 		int weight;
 		
 		initializeSingleSource(graph, s);
 		
-		for(int u = 1; u < graph->getNumberOfNodes(); u++)
-			queue->push_back(graph->getNodeAt(u));
+		BMinHeap* Q = new BMinHeap(graph->getNumberOfNodes());
+		for(int t=1; t<graph->getNumberOfNodes();t++)
+			Q->insert(graph->getNodeAt(t));
 
-
+		std::list<Edge*>::iterator adjIterator;
+		std::list<Edge*>* adjList;
 		
-		while(queue->size() > 0) {
-			queue->sort(compare_nocase);			// Nlog(N)
-			node1 = queue->front();
-			queue->pop_front();
+		while(Q->size() > 0) {			
+// 			std::cout  << std::endl << "Q: " << Q;
+			node1 = Q->extractMin();
+// 			std::cout << std::endl << "removed " << node1->getId() << std::endl;
 			
 			adjList = node1->getAdjacenciesList();
 			for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
 				node2 = (*adjIterator)->getNext();
 				weight = (*adjIterator)->getWeight();
-
-				relax(node1, node2, weight);
+				
+				relax(node1, node2, weight, Q);
 			}
 		}
 		
-		delete(queue);
+		delete(Q);
 	}
-	
-	
-// DOES NOT WORK CORRECTLY (PRIORITY QUEUE)
-	// class CompareNodes {
-	// public:
-	// 	bool operator() (Node *node1, Node *node2) {
-	// 		return node1->getPathCost() > node2->getPathCost();
-	// 	}
-	// };
-	
-	// static void run(Graph* graph, Node* s) {
-	// 	std::list<Edge*>::iterator adjIterator;
-	// 	std::list<Edge*>* adjList;
-	// 	std::priority_queue<Node*, std::vector<Node*>, CompareNodes> queue;
-		
-	// 	Node *node1, *node2;
-	// 	int weight;
-		
-	// 	initializeSingleSource(graph, s);
 
-	// 	for(int u = 1; u < graph->getNumberOfNodes(); u++)
-	// 		queue.push(graph->getNodeAt(u));
-		
-	// 	while(!queue.empty()) {
-	// 		node1 = queue.top();
-	// 		queue.pop();
-			
-	// 		adjList = node1->getAdjacenciesList();
-	// 		for(adjIterator = adjList->begin(); adjIterator != adjList->end(); adjIterator++) {
-	// 			node2 = (*adjIterator)->getNext();
-	// 			weight = (*adjIterator)->getWeight();
-
-	// 			relax(node1, node2, weight);
-	// 		}
-	// 	}
-	// 	//delete(queue);
-	// 	std::cout << "DIJSKTRA ENDED" << std::endl;
-	// }
 	
 };
 
@@ -1079,100 +914,108 @@ class Johnson {
 	
 	
 public:
-// 	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
+	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
 
-// 		int F = subsidiaries->size();
-// 		int tempCost;
+		int F = subsidiaries->size();
+		int tempCost;
 		
-// 		int **deslocationCost = new int*[F];
-// 		int *aux = new int[F];
+		int **deslocationCost = new int*[F];
+		int *temp, *aux = new int[F];
 		
-// 		for(int i=0; i<F; i++) {
-// 			deslocationCost[i] = new int[graph->getNumberOfNodes()];
-// 		}
+		for(int i=0; i<F; i++) {
+			deslocationCost[i] = new int[graph->getNumberOfNodes()];
+		}
 
-// 		connectSource(graph);
-// 		BellmanFord::run(graph, 0);
-// 		disconnectSource(graph);
-// // 		std::cout << graph << std::endl;
+		connectSource(graph);
+		BellmanFord::run(graph, 0);
+		disconnectSource(graph);
+// 		std::cout << graph << std::endl;
 
-// 		copyCostToH(graph);
-// 		for(int t = 1; t < graph->getNumberOfNodes(); t++){
-// 			graph->getNodeAt(t)->reweightEdges();
-// 		}
+		copyCostToH(graph);
+		for(int t = 1; t < graph->getNumberOfNodes(); t++){
+			graph->getNodeAt(t)->reweightEdges();
+		}
 
-// 		// std::cout << "before dijkstra " << graph << std::endl;
+		// std::cout << "before dijkstra " << graph << std::endl;
 
 
-// 		for(int u = 0; u < F; u++) {
-// 			Dijkstra::run(graph, subsidiaries->at(u));
-// // 			std::cout << "after dijkstra " << graph << std::endl;
-
-// 			for(int v = 1; v < graph->getNumberOfNodes(); v++){
-// 				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
-// 			}
-// 		}
-		
-// 		for(int v = 1; v < graph->getNumberOfNodes(); v++){
-// 			tempCost = 0;
-			
-// 			for(int u = 0; u < F; u++) {
-// 				tempCost += deslocationCost[u][v];
-// 			}
-			
-// 			if(tempCost < answer->totalLoss) {
-// 				answer->totalLoss = tempCost;
-// 				answer->location = v;
-				
-// 				for(int u = 0; u < F; u++)
-// 					aux[u] = deslocationCost[u][v];
-				
-// 				answer->deslocationCost = aux;
-// 			}
-// 		}
-// 	}
-	
- 	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
-		std::list<int>::iterator listIterator;
- 
-		int V = graph->getNumberOfNodes();
- 		int F = subsidiaries->size();
- 		int *deslocationCost = new int[V];
- 		int bestLocation;
- 
- 		connectSource(graph);
- 		BellmanFord::run(graph, 0);
- 		disconnectSource(graph);
-  
- 		copyCostToH(graph);
- 		for(int t = 1; t < V; t++){
- 			graph->getNodeAt(t)->reweightEdges();
- 			deslocationCost[t] = 0;
- 		}
-
- 		for(int u = 0; u < F; u++) {
- 			Dijkstra::run(graph, subsidiaries->at(u));
- 
- 			for(int v = 0; v < V; v++){
-				if(deslocationCost[v] != 99999)
-					deslocationCost[v] += graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
-				else
-					deslocationCost[v] = 99999;
- 			}
- 		}
- 		
- 		bestLocation = getBestLocation(deslocationCost, V);
- 	
- 		//Check if best location is valid *FIXME*
- 		
- 		answer->totalLoss = deslocationCost[bestLocation];
-		answer->location = bestLocation;
- 	
- 		for(int u = 0; u < F; u++) {
+		for(int u = 0; u < F; u++) {
 			Dijkstra::run(graph, subsidiaries->at(u));
-			answer->deslocationCost[u] = graph->getNodeAt(bestLocation)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
- 		}
- 	}
+// 			std::cout << "after dijkstra " << graph << std::endl;
+
+			for(int v = 1; v < graph->getNumberOfNodes(); v++){
+				deslocationCost[u][v] = graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
+			}
+		}
+		
+		for(int v = 1; v < graph->getNumberOfNodes(); v++){
+			tempCost = 0;
+			
+			for(int u = 0; u < F; u++) {
+				tempCost += deslocationCost[u][v];
+			}
+			
+			if(tempCost < answer->totalLoss) {
+				answer->totalLoss = tempCost;
+				answer->location = v;
+				
+				for(int u = 0; u < F; u++)
+					aux[u] = deslocationCost[u][v];
+				
+				temp = aux;
+				aux = answer->deslocationCost;
+				answer->deslocationCost = temp;
+			}
+		}
+		
+		for(int t=0; t<F; t++)
+			delete[] deslocationCost[t];
+		delete[] deslocationCost;
+		
+		delete[] aux;
+	}
+	
+//  	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
+// 		std::list<int>::iterator listIterator;
+//  
+// 		int V = graph->getNumberOfNodes();
+//  		int F = subsidiaries->size();
+//  		int *deslocationCost = new int[V];
+//  		int bestLocation;
+//  
+//  		connectSource(graph);
+//  		BellmanFord::run(graph, 0);
+//  		disconnectSource(graph);
+//   
+//  		copyCostToH(graph);
+//  		for(int t = 1; t < V; t++){
+//  			graph->getNodeAt(t)->reweightEdges();
+//  			deslocationCost[t] = 0;
+//  		}
+// 
+//  		for(int u = 0; u < F; u++) {
+//  			Dijkstra::run(graph, subsidiaries->at(u));
+//  
+//  			for(int v = 0; v < V; v++){
+// 				if(deslocationCost[v] != 99999)
+// 					deslocationCost[v] += graph->getNodeAt(v)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
+// 				else
+// 					deslocationCost[v] = 99999;
+//  			}
+//  		}
+//  		
+//  		bestLocation = getBestLocation(deslocationCost, V);
+//  	
+//  		//Check if best location is valid *FIXME*
+//  		
+//  		answer->totalLoss = deslocationCost[bestLocation];
+// 		answer->location = bestLocation;
+//  	
+//  		for(int u = 0; u < F; u++) {
+// 			Dijkstra::run(graph, subsidiaries->at(u));
+// 			answer->deslocationCost[u] = graph->getNodeAt(bestLocation)->getReweightPathCost(graph->getNodeAt(subsidiaries->at(u)));
+//  		}
+//  	}
 
 // 	static void run(Graph *graph, std::vector<int> *subsidiaries, Solution *answer){
 //
