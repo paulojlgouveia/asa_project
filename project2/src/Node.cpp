@@ -2,6 +2,8 @@
 #include <climits>
 #include "Node.h"
 
+//MERGE_START
+
 void Node::deleteAdjacencies() {
 	std::list<Edge*>::iterator adjIterator;
 	std::list<Edge*>* adjList = getAdjacenciesList();

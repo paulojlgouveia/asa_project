@@ -26,10 +26,9 @@ public:
 int main () {
 	int V = 0, F=0, E = 0;
 	int temp = -1;
-	//Graph* graph;
-	//std::vector<int>* subsidiaries = new std::vector<int>();
-	
-	//Solution * solution;
+	Graph* graph;
+	std::vector<int>* subsidiaries = new std::vector<int>();
+	Solution * solution;
 	
 	std::cin >> V;
 	std::cin >> F;
@@ -38,30 +37,30 @@ int main () {
 
 	for(int t=0; t<F; t++) {
 	 	std::cin >> temp;
-	// 	subsidiaries->push_back(temp);
+		subsidiaries->push_back(temp);
 	}
 	
-	TestClass array[10000];
-	
-	for(int t=0; t<10000; t++)
-		array[t] = TestClass(t);
-	std::cout << array[666].id << std::endl;
+// 	TestClass array[V];
+// 	
+// 	for(int t=0; t<10000; t++)
+// 		array[t] = TestClass(t);
+// 	std::cout << array[666].id << std::endl;
 	
 	//for(int t=0; t<100000; t++)
 	//	array[t] = Node(t);
 	
-	//solution = new Solution(F);
-	//graph = new Graph(V, E);
+	solution = new Solution(F);
+	graph = new Graph(V, E);
 
 // 	std::cout << graph << std::endl;
 	
-	//Johnson::run(graph, subsidiaries, solution);
-	//solution->print();
+	Johnson::run(graph, subsidiaries, solution);
+	solution->print();
 	
 	// free memory
-	//delete(subsidiaries);
-	//delete(solution);
-	//delete(graph);
+	delete(subsidiaries);
+	delete(solution);
+	delete(graph);
 	return 0;
 	
 }

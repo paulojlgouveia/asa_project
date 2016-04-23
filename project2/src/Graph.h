@@ -8,6 +8,7 @@
 #include "Node.h"
 
 //MERGE_START
+
 class Graph {
 	int _vertices;					// number of vertices
  	std::vector<Node*> *_nodes;		// list of nodes
@@ -50,6 +51,7 @@ public:
 
 
 };
+
 //MERGE_END
 
 
