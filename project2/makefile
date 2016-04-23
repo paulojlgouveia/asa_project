@@ -21,6 +21,7 @@ clean:
 	@rm -f *.o
 	@rm -f main
 	@rm -f app
+	@rm -f massif.out.*
 
 release:
 	g++ -ansi -pedantic -Wall -O3 -lm -c $(target)/al095_p2.cpp
@@ -31,9 +32,10 @@ run:
 	./main < files/input/$(in).in
 	
 memcheck:
+	@rm -f massif.out.*
 	valgrind --leak-check=full ./main < files/input/$(in).in
 	valgrind --tool=massif ./main < files/input/$(in).in
-	cat $(out)
+	ms_print massif.out.*
 	@echo
 
 	
