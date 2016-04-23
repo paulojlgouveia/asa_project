@@ -685,19 +685,19 @@ class Johnson {
 		}
 	}
 	
-	static int getBestLocation(int *deslocationCost, int V) {
-		int min_location = 99999;
-		int min_cost = 99999;
-		
-		for(int v = 0; v < V; v++){
-			if(deslocationCost[v] < min_cost){
-				min_cost = deslocationCost[v];
-				min_location = v;
-			}
-		}
-		return min_location;
-	}
-	
+// 	static int getBestLocation(int *deslocationCost, int V) {
+// 		int min_location = 99999;
+// 		int min_cost = 99999;
+// 		
+// 		for(int v = 0; v < V; v++){
+// 			if(deslocationCost[v] < min_cost){
+// 				min_cost = deslocationCost[v];
+// 				min_location = v;
+// 			}
+// 		}
+// 		return min_location;
+// 	}
+// 	
 	
 public:
 	
@@ -903,4 +903,5 @@ int main () {
 	return 0;
 	
 }
+
 

@@ -13,13 +13,12 @@ void Node::deleteAdjacencies() {
 		delete(*adjIterator);
 	}
 
-	//delete(_adjList);
+	delete(_adjList);
 }
 
 void Node::clearAdjacencies() {
 	deleteAdjacencies();
-	_adjList.clear();
-	// _adjList = new std::list<Edge*>();
+	_adjList = new std::list<Edge*>();
 }
 
 
@@ -27,7 +26,7 @@ void Node::clearAdjacencies() {
 void Node::connect(Node* adjacent, int weight) {
 	Edge* edge = new Edge(adjacent, weight);
 	
-	_adjList.push_front(edge);
+	_adjList->push_front(edge);
 	_adjSize++;
 }
 
